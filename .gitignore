@@ -1,0 +1,5 @@
+node_modules/
+abi/
+artifacts/
+cache/
+package-lock.json
