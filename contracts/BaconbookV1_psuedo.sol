@@ -57,7 +57,7 @@ contract Baconbook {
         if (equityBNB <= 0) {
             return 100;
         } else {
-            return mBNB.totalSupply() / (equityBNB/priceBNB());
+            return (equityBNB/priceBNB()) / mBNB.totalSupply;
         }
     }
     
