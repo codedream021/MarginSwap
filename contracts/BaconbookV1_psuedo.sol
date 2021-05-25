@@ -70,7 +70,7 @@ contract Baconbook {
     
     function redeemBNB(uint mBNBamount) public {
         uint price = mBNBprice(); // get price of mBNB
-        uint amountBNB = mBNBamount * price * (1 - redemptionFee/1000); // get amount of BNB to withdrawal 
+        uint amountBNB = mBNBamount * price * (1 - redemptionFee/DENOMINATOR); // get amount of BNB to withdrawal 
         borrowRepay(amountBNB*priceBNB()); // first repay BUSD with collateralBNB
         collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
         // send amountBNB back to user
