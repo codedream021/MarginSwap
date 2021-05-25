@@ -133,7 +133,7 @@ contract Baconbook {
     // ----- PancakeSwap Functions 
     
     function priceBNB() public returns(uint256) { //have it exact BUSD
-        // from PancakeSwap, or the Venus Price Oracle
+        // from PancakeSwap, or the Venus Price Oracle (preferred)
         // https://github.com/VenusProtocol/venus-protocol/blob/master/contracts/VenusPriceOracle.sol
     }
     
