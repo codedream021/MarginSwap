@@ -63,7 +63,7 @@ contract Baconbook {
     
     function depositBNB() public payable{
         uint price = mBNBprice();
-        uint mBNBamount = msg.value * price; // calculate amount of mBNB to mind and send
+        uint mBNBamount = msg.value / price; // calculate amount of mBNB to mind and send
         collateralSupply(msg.value); // send deposited BNB to Venus collateral 
         mBNB.mint(msg.sender, mBNBamount);// mint mBNBamount
     }
