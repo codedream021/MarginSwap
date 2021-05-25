@@ -14,7 +14,7 @@ contract Baconbook {
     //uint public borrowDAI; // amount of DAI borrowed from Venus 
     //uint public borrowBNB = 0; // BNB equivilent of borrowDAI
     //uint public equityBNB = 0; // BNB in collateral that is equity (collateralBNB - borrowBNB)
-    uint public ATHmBNB = 0; // highest price of mBNB in BUSD value
+    uint public ATHmBNB = 1; // highest price of mBNB in BUSD value
     address public owner;
     IMBNB public mBNB;
     IVenus public venus;
