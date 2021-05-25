@@ -27,7 +27,7 @@ contract Baconbook {
     // ADMIN adjustable
     uint public constant DENOMINATOR = 10000;
     uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150
-    uint public tradingFee = 100; // each trade 1% (to Owner)
+    uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders)  
    
@@ -55,7 +55,7 @@ contract Baconbook {
     function mBNBprice() public returns(uint) { // in BNB value 
         uint equityBNB = collateralBNB() - (borrowBUSD()/priceBNB());
         if (equityBNB <= 0) {
-            return 100;
+            return 1; // 1 BNB for 1 mBNB
         } else {
             return equityBNB / mBNB.totalSupply;
         }
@@ -69,7 +69,7 @@ contract Baconbook {
     }
     
     function redeemBNB(uint mBNBamount) public {
-        uint price = mBNBprice(); // get price of mBNB
+        uint price = mBNBprice(); // get price of mBNB (in BNB/mBNB)
         uint amountBNB = mBNBamount * price * (1 - redemptionFee/DENOMINATOR); // get amount of BNB to withdrawal 
         borrowRepay(amountBNB*priceBNB()); // first repay BUSD with collateralBNB
         collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
@@ -133,19 +133,19 @@ contract Baconbook {
     // ----- PancakeSwap Functions 
     
     function priceBNB() public returns(uint256) { //have it exact BUSD
-        // returns midprice at depth "uint" after slippage 
-        // from PancakeSwap, BNB = 800
+        // from PancakeSwap, or the Venus Price Oracle
+        // https://github.com/VenusProtocol/venus-protocol/blob/master/contracts/VenusPriceOracle.sol
     }
     
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
-        uint tradingFeeAmount = amountBUSD * (tradingFee/10000) * priceBNB();
+        uint tradingFeeAmount = amountBUSD * (tradingFee/DENOMINATOR) * priceBNB();
         // send tradingFeeAmount from collateralBNB to  owner
     }
     
     function buyBNB(uint amountBUSD) internal {
         // sell BUSD for BNB on PancakeSwap 
-        uint tradingFeeAmount = amountBUSD * (tradingFee/10000) * priceBNB();
+        uint tradingFeeAmount = amountBUSD * (tradingFee/DENOMINATOR) * priceBNB();
         // send tradingFeeAmount from collateralBNB to  owner
     }
 
@@ -191,4 +191,3 @@ contract Baconbook {
         xvs.transfer(owner, xvsBalance/2);
     }
 }   
-
