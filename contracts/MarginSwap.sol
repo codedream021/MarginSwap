@@ -6,9 +6,10 @@ import "./interfaces/IMBNB.sol";
 import "./interfaces/IVBNB.sol";
 import "./interfaces/IVBep20.sol";
 import "./interfaces/IVenus.sol";
+import "./interfaces/IVenusOracle.sol";
+import "./interfaces/IPancakeRouter.sol";
 
-contract Baconbook {
-    
+contract MarginSwap {
     // POOLS
     //uint public collateralBNB; // BNB collateral in Venus
     //uint public borrowDAI; // amount of DAI borrowed from Venus 
@@ -16,16 +17,21 @@ contract Baconbook {
     //uint public equityBNB = 0; // BNB in collateral that is equity (collateralBNB - borrowBNB)
     uint public ATHmBNB = 1; // highest price of mBNB in BUSD value
     address public owner;
+
     IMBNB public mBNB;
+    IERC20 public busd;
+
     IVenus public venus;
     IERC20 public xvs;
     IVBNB public vBNB;
-    IERC20 public busd;
     IVBep20 public vBusd;
+    IVenusOracle public constant venusOracle = IVenusOracle(0xd8B6dA2bfEC71D684D3E2a2FC9492dDad5C3787F);
 
+    IPancakeRouter public pancakeRouter;
     
     // ADMIN adjustable
     uint public constant DENOMINATOR = 10000;
+    uint public constant PRICE_DENOMINATOR = 1e18;
     uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
@@ -38,9 +44,12 @@ contract Baconbook {
     
     // -----   Constructor ------------- //
     
-    constructor(address _mBNB) public {
+    constructor(address _mBNB) {
         owner = msg.sender;
         mBNB = IMBNB(_mBNB);
+    }
+
+    receive() external payable {
     }
     
     // -----   Admin Functions ------------- //
@@ -48,39 +57,54 @@ contract Baconbook {
     function adminUpdate() onlyOwner external {
         // ability to update leverageTarget, tradingFee, performanceFee, redemptionFee
     }
-    
+
+    function getUSDValue(uint256 _amount, uint256 _price) internal pure returns(uint256) {
+        return _amount * _price / PRICE_DENOMINATOR;
+    }
+
+    function getAssetAmount(uint256 _usdAmount, uint256 _price) internal pure returns(uint256) {
+        return _usdAmount * PRICE_DENOMINATOR / _price;
+    }
+
+    function fraction(uint256 _amount, uint256 _ratio) internal pure returns(uint256) {
+        return _amount * _ratio / DENOMINATOR;
+    }
+
+    function sendFee(uint256 _fee) internal {
+        collateralWithdrawal(_fee);
+        payable(owner).transfer(_fee);
+    }
  
     // ----- Deposits & Withdrawals   ------ //
-    
-    function mBNBprice() public returns(uint) { // in BNB value 
-        uint equityBNB = collateralBNB() - (borrowBUSD()/priceBNB());
+    function mBNBtoBNB() public returns(uint) { // in BNB value
+        uint equityBNB = collateralBNB() - getAssetAmount(borrowBUSD(), priceBNB());
         if (equityBNB <= 0) {
-            return 1; // 1 BNB for 1 mBNB
+            return 1e18; // 1 BNB for 1 mBNB
         } else {
-            return equityBNB / mBNB.totalSupply;
+            return equityBNB / mBNB.totalSupply();
         }
     }
     
     function depositBNB() public payable{
-        uint price = mBNBprice();
-        uint mBNBamount = msg.value / price; // calculate amount of mBNB to mind and send
+        uint price = mBNBtoBNB();
+        uint mBNBamount = getUSDValue(msg.value, price); // calculate amount of mBNB to mind and send
         collateralSupply(msg.value); // send deposited BNB to Venus collateral 
         mBNB.mint(msg.sender, mBNBamount);// mint mBNBamount
     }
     
     function redeemBNB(uint mBNBamount) public {
-        uint price = mBNBprice(); // get price of mBNB (in BNB/mBNB)
-        uint amountBNB = mBNBamount * price * (1 - redemptionFee/DENOMINATOR); // get amount of BNB to withdrawal 
-        borrowRepay(amountBNB*priceBNB()); // first repay BUSD with collateralBNB
+        uint price = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
+        mBNB.transferFrom(msg.sender, address(this), mBNBamount);
+        uint bnbAmount = getUSDValue(mBNBamount, price);
+        uint feeAmount = fraction(bnbAmount, redemptionFee);
+        uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
+        borrowRepay(getUSDValue(amountBNB, priceBNB())); // first repay BUSD with collateralBNB
         collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
         // send amountBNB back to user
-        payable(msg.sender).transfer(mBNBamount);
+        payable(msg.sender).transfer(amountBNB);
     }
     
-
-    
     // ----- Venus Functions ------ // 
-    
     function collateralBNB() public returns(uint) { 
         // fetch collateral BNB quantity from Venus 
         // return that value
@@ -108,7 +132,7 @@ contract Baconbook {
     }
     
     function collateralWithdrawal(uint amountBNB) internal {
-        // withdrawal BNB collaterall
+        // withdrawal BNB collateral
         require(vBNB.redeemUnderlying(amountBNB) == 0, "!withdraw");
     }
     
@@ -132,50 +156,68 @@ contract Baconbook {
     
     // ----- PancakeSwap Functions 
     
-    function priceBNB() public returns(uint256) { //have it exact BUSD
+    function priceBNB() public view returns(uint256) { //have it exact BUSD
         // from PancakeSwap, or the Venus Price Oracle (preferred)
         // https://github.com/VenusProtocol/venus-protocol/blob/master/contracts/VenusPriceOracle.sol
+        return venusOracle.getUnderlyingPrice(address(vBNB));
     }
     
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
-        uint tradingFeeAmount = amountBUSD * (tradingFee/DENOMINATOR) * priceBNB();
-        // send tradingFeeAmount from collateralBNB to  owner
+        uint fee = getUSDValue(fraction(amountBUSD,tradingFee), priceBNB());
+        uint256 price = priceBNB();
+        uint256 inputBNB = getAssetAmount(amountBUSD, price) * 101 / 100; // 1% slippage
+        address wbnb = pancakeRouter.WETH();
+        address[] memory path = new address[](2);
+        path[0] = wbnb;
+        path[1] = address(busd);
+        pancakeRouter.swapETHForExactTokens{value:inputBNB}(amountBUSD, path, address(this), block.timestamp);
+        // send tradingFeeAmount from collateralBNB to owner
+        sendFee(fee);
     }
     
     function buyBNB(uint amountBUSD) internal {
         // sell BUSD for BNB on PancakeSwap 
-        uint tradingFeeAmount = amountBUSD * (tradingFee/DENOMINATOR) * priceBNB();
-        // send tradingFeeAmount from collateralBNB to  owner
+        uint fee = getUSDValue(fraction(amountBUSD, tradingFee), priceBNB());
+        uint256 price = priceBNB();
+        uint256 minBNB = getAssetAmount(amountBUSD, price) * 99 / 100; // 1% slippage
+        address wbnb = pancakeRouter.WETH();
+        address[] memory path = new address[](2);
+        path[0] = address(busd);
+        path[1] = wbnb;
+        pancakeRouter.swapExactTokensForETH(amountBUSD,  minBNB, path, address(this), block.timestamp);
+        // send tradingFeeAmount from collateralBNB to owner
+        sendFee(fee);
     }
 
     
     // ---- Rebalance Mechanism ----- // 
     
     function performanceFees() internal {
-        uint mBNBpriceNow = mBNBprice();
-        if (mBNBpriceNow > ATHmBNB) {
-            uint feeBNB = (mBNBpriceNow/ATHmBNB - 1)*borrowBUSD();
-            // send feeBNB to owner from collateralBNB  
-            ATHmBNB = mBNBpriceNow; //update mBNB all time high price 
+        uint mBNBtoBNBNow = mBNBtoBNB();
+        if (mBNBtoBNBNow > ATHmBNB) {
+            uint fee = (mBNBtoBNBNow - ATHmBNB)*borrowBUSD() / ATHmBNB;
+            // send feeBNB to owner from collateralBNB
+            sendFee(fee); 
+            ATHmBNB = mBNBtoBNBNow; //update mBNB all time high price 
         }
     }
     
     function borrowBNB(uint amountBUSD) internal { // purchases BNB with borrowed BUSD
         borrow(amountBUSD); // first borrow BUSD
         buyBNB(amountBUSD); // then trade for BNB 
-        collateralSupply(amountBUSD/priceBNB()); // then post as collateral 
+        collateralSupply(getUSDValue(amountBUSD, priceBNB())); // then post as collateral 
     }
     
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
-        collateralWithdrawal(amountBUSD/priceBNB()); // first withdrawal collateral 
+        collateralWithdrawal(getUSDValue(amountBUSD, priceBNB())); // first withdrawal collateral 
         buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(amountBUSD); // then repay BUSD 
     }
     
     
     function rebalance() public {
-        uint targetLoan = collateralBNB()*priceBNB()*(leverageTarget-1/leverageTarget);
+        uint targetLoan = getUSDValue(collateralBNB(), priceBNB())*(leverageTarget-DENOMINATOR)/leverageTarget;
         int rebalanceAmount = int(targetLoan) - int(borrowBUSD()); // positive if need more loan
         performanceFees(); // run performance fee calculation
         if (rebalanceAmount > 0) { // could have it as a threshold
