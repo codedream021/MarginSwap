@@ -5,6 +5,8 @@ import { Contract, Signer, BigNumber, constants } from "ethers";
 describe("MarginSwap", function(){
   let accounts: Signer[];
   let marginSwap: Contract;
+  let vBNB: Contract;
+  let mBNB: Contract;
   let owner: Signer;
   let user: Signer;
   const resetFork = async () => {
@@ -33,6 +35,8 @@ describe("MarginSwap", function(){
 
     const MarginSwapFactory = await ethers.getContractFactory("MarginSwap");
     marginSwap = await MarginSwapFactory.deploy();
+    vBNB = await ethers.getContractAt("IVBNB", await marginSwap.vBNB());
+    mBNB = await ethers.getContractAt("mBNB", await marginSwap.mbnb());
   });
 
   it("should be able to enter market", async function(){
@@ -40,12 +44,20 @@ describe("MarginSwap", function(){
   });
 
   describe("deposit & withdraw", function(){
+    const amount = BigNumber.from("1000000000000000000");
     beforeEach(async function(){
       await marginSwap.enableCollateral();
     });
 
     it("should be able to deposit bnb", async function(){
-      await marginSwap.connect(user).depositBNB({value: "1000000000000000000"});
+      await marginSwap.connect(user).depositBNB({value: amount});
+      const vbnbBal = await vBNB.balanceOf(marginSwap.address);
+      const rate = await vBNB.exchangeRateStored();
+      console.log(vbnbBal.mul(rate).div(amount).toString());
+      console.log((await mBNB.callStatic.balanceOf(user.getAddress())).toString());
+      console.log((await marginSwap.callStatic.mBNBtoBNB()).toString());
+      await mBNB.connect(user).approve(marginSwap.address, amount);
+      await marginSwap.connect(user).redeemBNB(amount);
     });
   });
 });

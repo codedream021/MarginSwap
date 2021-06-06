@@ -16,7 +16,6 @@ contract MarginSwap {
     //uint public borrowBNB = 0; // BNB equivilent of borrowDAI
     //uint public equityBNB = 0; // BNB in collateral that is equity (collateralBNB - borrowBNB)
     uint public ATHmBNB = 1e18; // highest price of mBNB in BUSD value
-    // TODO: add owner change functions
     address public owner;
 
     IMBNB public immutable mbnb;
@@ -89,7 +88,7 @@ contract MarginSwap {
         if (equityBNB <= 0) {
             return 1e18; // 1 BNB for 1 mBNB
         } else {
-            return equityBNB / mbnb.totalSupply();
+            return equityBNB * 1e18 / mbnb.totalSupply();
         }
     }
  
@@ -108,8 +107,12 @@ contract MarginSwap {
         uint bnbAmount = getValue(mBNBamount, priceAsBNB);
         uint feeAmount = fraction(bnbAmount, redemptionFee);
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
-        borrowRepay(getValue(amountBNB, priceBNB())); // first repay BUSD with collateralBNB
-        collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
+        if(address(this).balance < amountBNB){
+            if(collateralBNB() < amountBNB){
+                borrowRepay(getValue(amountBNB, priceBNB())); // first repay BUSD with collateralBNB
+            }
+            collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
+        }
         // send amountBNB back to user
         payable(msg.sender).transfer(amountBNB);
     }
