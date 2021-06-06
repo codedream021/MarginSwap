@@ -55,10 +55,19 @@ contract MarginSwap {
     }
     
     // -----   Admin Functions ------------- //
-    
-    function adminUpdate() onlyOwner external {
-        // ability to update leverageTarget, tradingFee, performanceFee, redemptionFee
+
+    function transferOwnership(address _newOwner) onlyOwner external {
+        owner = _newOwner;
     }
+    
+    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee) onlyOwner external {
+        leverageTarget = _leverageTarget;
+        tradingFee = _tradingFee;
+        performanceFee = _performanceFee;
+        redemptionFee = _redemptionFee;
+    }
+
+    // -----   Utility Functions ----------- //
 
     function getValue(uint256 _amount, uint256 _price) internal pure returns(uint256) {
         return _amount * _price / PRICE_DENOMINATOR;
