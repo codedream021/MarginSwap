@@ -44,7 +44,6 @@ contract MarginSwap {
     } 
     
     // -----   Constructor ------------- //
-    
     constructor() {
         owner = msg.sender;
         mBNB _mbnb = new mBNB();
@@ -55,7 +54,6 @@ contract MarginSwap {
     }
     
     // -----   Admin Functions ------------- //
-
     function transferOwnership(address _newOwner) onlyOwner external {
         owner = _newOwner;
     }
@@ -85,17 +83,17 @@ contract MarginSwap {
         collateralWithdrawal(_fee);
         payable(owner).transfer(_fee);
     }
- 
-    // ----- Deposits & Withdrawals   ------ //
+    
     function mBNBtoBNB() public returns(uint) { // in BNB value
-        uint equityBNB = collateralBNB() - getAssetAmount(borrowBUSD(), priceBNB());
+        uint equityBNB = collateralBNB() - getAssetAmount(borrowedBUSD(), priceBNB());
         if (equityBNB <= 0) {
             return 1e18; // 1 BNB for 1 mBNB
         } else {
             return equityBNB / mbnb.totalSupply();
         }
     }
-    
+ 
+    // ----- Deposits & Withdrawals   ------ //
     function depositBNB() public payable{
         uint priceAsBNB = mBNBtoBNB();
         uint mBNBamount = getValue(msg.value, priceAsBNB); // calculate amount of mBNB to mind and send
@@ -123,13 +121,13 @@ contract MarginSwap {
         return vBNB.balanceOfUnderlying(address(this));
     }
     
-    function borrowBUSD() public returns(uint) { 
+    function borrowedBUSD() public returns(uint) { 
         // fetch borrow BUSD quantity from Venus 
         // return that value 
         return vBusd.borrowBalanceCurrent(address(this));
     }
     
-    function enableCollateral() public onlyOwner { // can create the onlyOwner function as well 
+    function enableCollateral() public onlyOwner {
         // must turn collateral
         address[] memory market = new address[](2);
         market[0] = address(vBNB);
@@ -166,14 +164,13 @@ contract MarginSwap {
         venus.claimVenus(address(this));
     }
     
-    // ----- PancakeSwap Functions 
-    
     function priceBNB() public view returns(uint256) { //have it exact BUSD
         // from PancakeSwap, or the Venus Price Oracle (preferred)
         // https://github.com/VenusProtocol/venus-protocol/blob/master/contracts/VenusPriceOracle.sol
         return venusOracle.getUnderlyingPrice(address(vBNB));
     }
     
+    // ----- PancakeSwap Functions 
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
         uint fee = getValue(fraction(amountBUSD,tradingFee), priceBNB());
@@ -202,13 +199,11 @@ contract MarginSwap {
         sendFee(fee);
     }
 
-    
     // ---- Rebalance Mechanism ----- // 
-    
     function performanceFees() internal {
         uint mBNBtoBNBNow = mBNBtoBNB();
         if (mBNBtoBNBNow > ATHmBNB) {
-            uint fee = (mBNBtoBNBNow - ATHmBNB)*borrowBUSD() / ATHmBNB;
+            uint fee = (mBNBtoBNBNow - ATHmBNB)*borrowedBUSD() / ATHmBNB;
             // send feeBNB to owner from collateralBNB
             sendFee(fee); 
             ATHmBNB = mBNBtoBNBNow; //update mBNB all time high price 
@@ -229,7 +224,7 @@ contract MarginSwap {
     
     function rebalance() public {
         uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageTarget-DENOMINATOR)/leverageTarget;
-        int rebalanceAmount = int(targetLoan) - int(borrowBUSD()); // positive if need more loan
+        int rebalanceAmount = int(targetLoan) - int(borrowedBUSD()); // positive if need more loan
         performanceFees(); // run performance fee calculation
         if (rebalanceAmount > 0) { // could have it as a threshold
             borrowBNB(uint256(rebalanceAmount)); // borrow DAI to buy BNB 

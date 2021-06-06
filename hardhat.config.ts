@@ -1,4 +1,5 @@
 import "@nomiclabs/hardhat-waffle";
+import {ethers} from "ethers";
 import "solidity-coverage";
 import "hardhat-spdx-license-identifier";
 import "hardhat-abi-exporter";
@@ -7,6 +8,8 @@ import "hardhat-gas-reporter";
 // this private key will be used to deploy the contracts
 // ***DO NOT ADD THIS TO GITHUB***
 const privateKey = "";
+const bscUrl = "https://bsc.getblock.io/mainnet/?api_key=a0585443-21fd-4da6-a347-373e9be47bb3";
+
 export default {
   abiExporter: {
     path: './abi',
@@ -37,23 +40,21 @@ export default {
         accountsBalance: "1000000000000000000000000"
       },
       allowUnlimitedContractSize: true,
-      timeout: 1000000
+      forking: {
+        url: bscUrl,
+      },
+      timeout: 6000000
     },
     coverage: {
       url: 'http://localhost:8555'
     },
     mainnet: {
-      url: 'https://infura.io/v3/d3979c2248d34fa9a0ccf4c84ebb753d',
-//      accounts: [
-//        privateKey
-//      ]
-    },
-    ropsten: {
-      url: 'https://ropsten.infura.io/v3/d3979c2248d34fa9a0ccf4c84ebb753d',
-      accounts: [
-        '0xa14cfd86bcd9aac74f04aa4fefe5ed3cfb564a096b6766df04f492c688dbc456'
-      ]
+      url: 'https://bsc-dataseed1.binance.org:443',
     }
+  },
+  mocha: {
+    timeout: 2000000
   }
+
 };
 
