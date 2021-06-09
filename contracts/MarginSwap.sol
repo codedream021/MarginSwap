@@ -226,8 +226,7 @@ contract MarginSwap {
     }
     
     function rebalance() public {
-        uint leverageFactor = leverageTarget/DENOMINATOR; // value of 2 will be 2x leverage position of BNB 
-        uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageFactor - 1)/leverageFactor; // target BUSD loan
+        uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageTarget - DENOMINATOR)/leverageTarget; // target BUSD loan
         int rebalanceAmount = int(targetLoan) - int(borrowedBUSD()); // positive if need more loan
         performanceFees(); // run performance fee calculation
         if (rebalanceAmount > 0) { // could have it as a threshold
