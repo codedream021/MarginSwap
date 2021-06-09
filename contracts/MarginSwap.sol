@@ -204,7 +204,7 @@ contract MarginSwap {
 
     // ---- Rebalance Mechanism ----- // 
     function performanceFees() internal {
-        uint mBNBtoBNBNow = mBNBtoBNB();
+        uint mBNBtoBNBNow = mBNBtoBNB(); // 3.5 means 3.5 mBNB per BNB
         if (mBNBtoBNBNow > ATHmBNB) {
             uint fee = (mBNBtoBNBNow - ATHmBNB)*borrowedBUSD() / ATHmBNB;
             // send feeBNB to owner from collateralBNB
@@ -226,8 +226,8 @@ contract MarginSwap {
     }
     
     function rebalance() public {
-        uint leverageFactor = leverageTarget/DENOMINATOR;
-        uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageFactor - 1)/leverageFactor;
+        uint leverageFactor = leverageTarget/DENOMINATOR; // value of 2 will be 2x leverage position of BNB 
+        uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageFactor - 1)/leverageFactor; // target BUSD loan
         int rebalanceAmount = int(targetLoan) - int(borrowedBUSD()); // positive if need more loan
         performanceFees(); // run performance fee calculation
         if (rebalanceAmount > 0) { // could have it as a threshold
