@@ -8,7 +8,8 @@ import "hardhat-gas-reporter";
 // this private key will be used to deploy the contracts
 // ***DO NOT ADD THIS TO GITHUB***
 const privateKey = "";
-const bscUrl = "https://bsc.getblock.io/mainnet/?api_key=a0585443-21fd-4da6-a347-373e9be47bb3";
+//const bscUrl = "https://bsc.getblock.io/mainnet/?api_key=a0585443-21fd-4da6-a347-373e9be47bb3";
+const bscUrl = "https://bsc.getblock.io/testnet/?api_key=a0585443-21fd-4da6-a347-373e9be47bb3";
 
 export default {
   abiExporter: {
@@ -50,6 +51,12 @@ export default {
     },
     mainnet: {
       url: 'https://bsc-dataseed1.binance.org:443',
+    },
+    testnet: {
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      accounts: [
+        'f063e0efb3b524df5ce379045625fe9013e5004945e50e1cdabeda147022ce45'
+      ]
     }
   },
   mocha: {
