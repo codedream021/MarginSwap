@@ -1,0 +1,15 @@
+.splitScreen {
+  width: 100%;
+  display: flex;
+  flexDirection: row;
+}
+.topPane {
+  width: 50%;
+  margin: 10px;
+  word-break: break-all;
+}
+.bottomPane {
+  width: 50%;
+  margin: 10px;
+  word-break: break-all;
+}
