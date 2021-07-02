@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="142.93.148.200" id="7d2147b0-35f0-4116-b80a-5f22dd43e1fc" keyPath="C:\Users\Dell\.ssh\trada.ppk" port="22" customName="margin" nameFormat="CUSTOM" username="root">
+        <option name="customName" value="margin" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
