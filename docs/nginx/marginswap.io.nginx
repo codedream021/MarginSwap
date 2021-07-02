@@ -1,0 +1,75 @@
+server {
+    return 404;
+    if ($host = marginswap.io) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    if ($host = '142.93.148.200') {
+        return 444;
+    }
+
+    listen 80;
+    server_name marginswap.io;
+    return 404; # managed by Certbot
+}
+
+geo $dollar {
+    default "$";
+}
+
+server {
+    listen 443 ssl default_server;
+    server_name marginswap.io;
+
+    ssl_certificate /etc/letsencrypt/live/marginswap.io/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/marginswap.io/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    gzip            on;
+    gzip_types      text/plain application/xml text/css application/javascript;
+    gzip_min_length 10;
+
+    error_page 503 /maintenance_page.html;
+    location = /maintenance_page.html {
+        root /home/django/;
+    }
+
+#    location = /robots.txt {
+#       add_header Content-Type text/plain;
+#       return 200 "User-agent: Disallow: /";
+#    }
+    
+    location / {
+        if (-f /home/django/maintenance_page.html) {
+            return 503;
+        }
+        root   /home/MarginSwap/frontend/dist/;
+        index  index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+#    location /static/ {
+#        alias   /home/django/tradeium/backend/staticfiles/;
+#    }
+
+    if ($host !~* ^(marginswap.io)$ ) {
+        return 444;
+    }
+
+    if ($host = '142.93.148.200') {
+        return 444;
+    }
+
+#    location /hooks/ {
+#        try_files $uri @proxy;
+#    }
+#
+#    location @proxy {
+#        proxy_pass http://webhooks;
+#    }
+}
+
+#upstream webhooks {
+#    server 0.0.0.0:9001;
+#}
