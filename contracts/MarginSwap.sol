@@ -8,7 +8,6 @@ import "./interfaces/IVBep20.sol";
 import "./interfaces/IVenus.sol";
 import "./interfaces/IVenusOracle.sol";
 import "./interfaces/IPancakeRouter.sol";
-import "hardhat/console.sol";
 
 contract MarginSwap {
     // POOLS
@@ -242,14 +241,6 @@ contract MarginSwap {
 
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
         uint256 withdrawAmount = getValue(amountBUSD, priceBNB());
-        console.log("WITHDRAW");
-        console.logUint(amountBUSD);
-        console.logUint(withdrawAmount);
-        console.logUint(busd.balanceOf(address(this)));
-        console.logUint(address(this).balance);
-        console.logUint(vBNB.balanceOf(address(this)));
-        console.logUint(vBusd.balanceOf(address(this)));
-        console.logUint(vBusd.borrowBalanceCurrent(address(this)));
         //collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
         //buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(amountBUSD); // then repay BUSD 
@@ -258,8 +249,6 @@ contract MarginSwap {
 
     function rebalance() public {
         uint256 fee = performanceFees(); // run performance fee calculation
-        console.log("Rebalance");
-        console.logUint(busd.balanceOf(address(this)));
         borrowRepay(busd.balanceOf(address(this)));
         if(address(this).balance < fee) {
             collateralWithdrawal(fee);
