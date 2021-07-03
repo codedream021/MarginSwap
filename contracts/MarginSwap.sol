@@ -164,8 +164,6 @@ contract MarginSwap {
     function borrow(uint amountBUSD) internal {
         // make sure within Borrow Limit
         // borrow amountBUSD from Venus
-        console.log("BORROW");
-        console.logUint(amountBUSD);
         require(vBusd.borrow(amountBUSD) == 0, "!borrow");
     }
 
