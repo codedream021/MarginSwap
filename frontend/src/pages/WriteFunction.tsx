@@ -3,33 +3,28 @@ import { useWallet } from 'use-wallet';
 import Web3 from 'web3';
 import {AbiItem} from 'web3-utils';
 import BigNumber from 'bignumber.js';
+import {execute} from '../utils/interaction';
+import erc20 from '../assets/IERC20.json';
+type AbiType = { [key:string]: AbiItem[] }
 type DecimalInfo = { [key:string]: number };
+type ApprovalInfo = {
+  address : string;
+  amount : string;
+}
 interface WriteFunctionProps {
   address: string;
   abi: AbiItem;
   decimals?: DecimalInfo;
+  approve?: ApprovalInfo;
 }
 
-const exec = async (provider: any, address: string, to:string, data: string, value:BigNumber) => {
-  let web3 = new Web3(provider);
-  let estimate = 1000000;
-  try {
-    estimate = await web3.eth.estimateGas({
-      from:address,
-      to:to,
-      data:data,
-      value:value.toString()
-    });
-  } catch(e) {
-    alert('this transaction will fail, check the code : '+ e.message);
+function findArg(abi: AbiItem, name: string) : number{
+  for(let i = 0; i< abi.inputs!.length; i++) {
+    if(abi.inputs![i].name === name) {
+      return i;
+    }
   }
-  web3.eth.sendTransaction({
-    from:address,
-    to:to,
-    data:data,
-    value:value.toString(),
-    gas:new BigNumber(estimate).times(2).toString()
-  });
+  return -1;
 }
 export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
   const [inputs, setInputs] = useState(new Array(props.abi.stateMutability === "payable" ? props.abi.inputs!.length + 1 : props.abi.inputs!.length).fill(''));
@@ -64,13 +59,26 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
     if(inputs![props.abi.inputs!.length] === undefined){
       encoded = web3.eth.abi.encodeFunctionCall(props.abi,inputs);
     } else {
-      console.log(inputs);
       value = new BigNumber(inputs.pop());
-      console.log(inputs);
-      console.log(value);
       encoded = web3.eth.abi.encodeFunctionCall(props.abi,inputs);
     }
-    exec(ethereum, account!, props.address, encoded, value);
+    if(props.approve !== undefined) {
+      const approveAmount = inputs![findArg(props.abi, props.approve!.amount)];
+      const token = new web3.eth.Contract(erc20 as AbiItem[], props.approve!.address);
+      token.methods.allowance(account!, props.approve!.address).call().then((res: BigNumber) =>{
+        if(new BigNumber(res).gte(approveAmount)){
+          execute(ethereum, account!, props.address, encoded, value);
+        } else {
+          const approveEncoded = token.methods.approve(props.address, approveAmount).encodeABI();
+          execute(ethereum, account!, props.approve!.address, approveEncoded, new BigNumber(0)).then( (res:any)=>{
+            console.log(res);
+            execute(ethereum, account!, props.address, encoded, value);
+          });
+        }
+      });
+    } else {
+      execute(ethereum, account!, props.address, encoded, value);
+    }
   }
 
   return(

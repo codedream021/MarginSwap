@@ -24,6 +24,12 @@
         "redeemBNB" : {
           "mBNBamount" : 18
         }
+      },
+      "approves": {
+        "redeemBNB": {
+          "address": "0x1193b549106b92677e491aeb8766bd22cc36c84b",
+          "amount" : "mBNBamount"
+        }
       }
     },
     {

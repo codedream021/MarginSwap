@@ -13,6 +13,7 @@ type ContractType = { [key:string]: AbiItem[] }
 interface TabProps {
   address: string;
   decimals: any;
+  approves: any;
   writeFunctions: AbiItem[];
   viewFunctions: AbiItem[];
 }
@@ -26,7 +27,7 @@ export function TabComponent(props: TabProps) : React.ReactElement {
             <fieldset>
               <legend>write functions</legend>
               {props.writeFunctions.map((x) =>{
-                return <WriteFunction key={props.address + x.name + x.inputs!.length} address={props.address} abi={x} decimals={props.decimals[x.name!]} />
+                return <WriteFunction key={props.address + x.name + x.inputs!.length} address={props.address} abi={x} decimals={props.decimals[x.name!]} approve={props.approves[x.name!]} />
                 })
               }
             </fieldset>
