@@ -30,6 +30,8 @@
           "address": "0x1193b549106b92677e491aeb8766bd22cc36c84b",
           "amount" : "mBNBamount"
         }
+      },
+      "approves":{
       }
     },
     {
@@ -40,12 +42,37 @@
         "enableCollateral",
         "transferOwnership",
         "setSlippage",
-        "owner"
+        "owner",
+        "updateRatio",
+        "leverageTarget",
+        "tradingFee",
+        "performanceFee",
+        "redemptionFee"
       ],
       "decimals": {
         "setSlippage" : {
           "_slippage" : 2
+        },
+        "updateRatio" : {
+          "_leverageTarget" : 2,
+          "_tradingFee" : 2,
+          "_performanceFee" : 2,
+          "_redemptionFee" : 2
+        },
+        "leverageTarget":{
+          "leverageTarget": 2
+        },
+        "tradingFee": {
+          "tradingFee": 2
+        },
+        "performanceFee": {
+          "performanceFee": 2
+        },
+        "redemptionFee": {
+          "redemptionFee": 2
         }
+      },
+      "approves":{
       }
     },
     {
@@ -76,6 +103,8 @@
         "rebalanceAmount": {
           "rebalanceAmount" :18
         }
+      },
+      "approves":{
       }
     },
     {
@@ -91,6 +120,8 @@
         "totalSupply": {
           "totalSupply": 18
         }
+      },
+      "approves":{
       }
     }
   ]

@@ -25,11 +25,11 @@ export function ContractComponent(props: ContractProps) : React.ReactElement {
     <Tabs>
       <TabList>
         {props.config.tabs.map((x) => {
-          return <Tab>{x.name}</Tab>
+          return <Tab key={x.name}>{x.name}</Tab>
         })}
       </TabList>
       {props.config.tabs.map((x) => {
-        return <TabPanel>
+        return <TabPanel key={x.name}>
           <TabComponent
             address={x.address}
             decimals={x.decimals}
