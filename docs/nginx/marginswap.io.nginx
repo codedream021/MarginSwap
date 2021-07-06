@@ -1,5 +1,4 @@
 server {
-    return 404;
     if ($host = marginswap.io) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
@@ -61,15 +60,15 @@ server {
         return 444;
     }
 
-#    location /hooks/ {
-#        try_files $uri @proxy;
-#    }
-#
-#    location @proxy {
-#        proxy_pass http://webhooks;
-#    }
+    location /hooks/ {
+        try_files $uri @proxy;
+    }
+
+    location @proxy {
+        proxy_pass http://webhooks;
+    }
 }
 
-#upstream webhooks {
-#    server 0.0.0.0:9001;
-#}
+upstream webhooks {
+    server 0.0.0.0:9001;
+}

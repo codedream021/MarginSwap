@@ -1,0 +1,43 @@
+[
+  {
+    "id": "webhook",
+    "execute-command": "/bin/bash",
+    "pass-arguments-to-command": [
+      {
+        "source": "string",
+        "name": "/home/MarginSwap/deploy.sh"
+      }
+    ],
+    "command-working-directory": "/home/MarginSwap/",
+    "trigger-rule":
+    {
+      "and":
+      [
+        {
+          "match":
+          {
+            "type": "payload-hash-sha1",
+            "secret": "sdfsdffsddfsdfssdfsdfhgyjghjghgfgfh35345",
+            "parameter":
+            {
+              "source": "header",
+              "name": "X-Hub-Signature"
+            }
+          }
+        },
+        {
+          "match":
+          {
+            "type": "value",
+            "value": "refs/heads/main",
+            "parameter":
+            {
+              "source": "payload",
+              "name": "ref"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
