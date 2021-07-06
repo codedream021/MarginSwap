@@ -237,12 +237,12 @@ contract MarginSwap {
         collateralSupply(bought); // then post as collateral 
     }
 
-    function repayBNB(uint amountBUSD) internal { // repays BUSD with BNB in collateral 
+    function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
         uint256 withdrawAmount = getValue(amountBUSD, priceBNB());
-        //collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
-        //buyBUSD(amountBUSD); // then sell BNB for BUSD 
+        collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
+        buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(amountBUSD); // then repay BUSD 
-        rebalance();
+        //rebalance();
     }
 
     function rebalance() public {
