@@ -128,34 +128,26 @@ contract MarginSwap {
 
 
     // ----- Venus Functions ------ // 
-    function collateralBNB() public returns(uint) { 
-        // fetch collateral BNB quantity from Venus 
-        // return that value
+    function collateralBNB() public returns(uint) { // amount of BNB collateral on Venus
         return vBNB.balanceOfUnderlying(address(this));
     }
 
-    function borrowedBUSD() public returns(uint) { 
-        // fetch borrow BUSD quantity from Venus 
-        // return that value 
+    function borrowedBUSD() public returns(uint) { // amount of BUSD borrowed from Venus
         return vBusd.borrowBalanceCurrent(address(this));
     }
 
-    function enableCollateral() public onlyOwner {
-        // must turn collateral
+    function enableCollateral() public onlyOwner { // True, to accumulate XVS for collateral 
         address[] memory market = new address[](2);
         market[0] = address(vBNB);
         market[1] = address(vBusd);
         venus.enterMarkets(market);
     }
 
-    function collateralSupply(uint amountBNB) internal {
-        // add more BNB as collateral
-        // it is ok to not "require" on this since vBNB handles error on mint
+    function collateralSupply(uint amountBNB) internal { supply BNB as collateral 
         vBNB.mint{value:amountBNB}();
     }
 
-    function collateralWithdrawal(uint amountBNB) internal {
-        // withdrawal BNB collateral
+    function collateralWithdrawal(uint amountBNB) internal { // withdrawal BNB collateral 
         borrowRepay(busd.balanceOf(address(this))); // first repay BUSD with collateralBNB
         uint256 res = vBNB.redeemUnderlying(amountBNB);
         require(res == 0, "!withdraw");
