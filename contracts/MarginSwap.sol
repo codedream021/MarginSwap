@@ -256,7 +256,7 @@ contract MarginSwap {
         redeemXVS();
         uint256 xvsBalance = xvs.balanceOf(address(this));
         // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-        xvs.transfer(msg.sender, xvsBalance(1 - ownerFeeXVS/DENOMINATOR));
+        xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
         xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
     }
 
