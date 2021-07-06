@@ -36,6 +36,7 @@ contract MarginSwap {
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
+    uint public ownerFeeXVS = 5000; // 50% is 5000. 50% of XVS redemption goes to owner at rebalance
     uint public slippage = 100; 
 
     modifier onlyOwner() {
@@ -254,8 +255,8 @@ contract MarginSwap {
         redeemXVS();
         uint256 xvsBalance = xvs.balanceOf(address(this));
         // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-        xvs.transfer(msg.sender, xvsBalance/2);
-        xvs.transfer(owner, xvsBalance/2);
+        xvs.transfer(msg.sender, xvsBalance(1 - ownerFeeXVS/DENOMINATOR));
+        xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
     }
 
     function rebalanceAmount() public returns(int256) {
