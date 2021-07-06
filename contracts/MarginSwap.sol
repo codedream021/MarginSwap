@@ -237,7 +237,7 @@ contract MarginSwap {
         collateralSupply(bought); // then post as collateral 
     }
 
-    function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
+    function repayBNB(uint amountBUSD) internal { // repays BUSD with BNB in collateral 
         uint256 withdrawAmount = getValue(amountBUSD, priceBNB());
         //collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
         //buyBUSD(amountBUSD); // then sell BNB for BUSD 
@@ -247,17 +247,17 @@ contract MarginSwap {
 
     function rebalance() public {
         uint256 fee = performanceFees(); // run performance fee calculation
-        borrowRepay(busd.balanceOf(address(this)));
-        if(address(this).balance < fee) {
-            collateralWithdrawal(fee);
+        borrowRepay(busd.balanceOf(address(this))); // repay all BUSD held by contract
+        if(address(this).balance < fee) { //check if fee greater than balance
+            collateralWithdrawal(fee); // if so, withdrawal BNB of amount fee
         }
-        sendFee(fee);
-        int256 amount = rebalanceAmount();
+        sendFee(fee); // transfer fee to Owner
+        int256 amount = rebalanceAmount(); // compute the rebalance amount 
         if (amount > 0) { // could have it as a threshold
             borrowBNB(uint256(amount)); // borrow DAI to buy BNB
         } else {
             // require();
-            repayBNB(uint256(-amount)); // use BNB to repay loan
+            repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
         }
         redeemXVS();
         uint256 xvsBalance = xvs.balanceOf(address(this));
