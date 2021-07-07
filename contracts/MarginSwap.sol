@@ -72,11 +72,11 @@ contract MarginSwap {
     }
 
     function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS) onlyOwner external {
-        leverageTarget = _leverageTarget;
-        tradingFee = _tradingFee;
-        performanceFee = _performanceFee;
-        redemptionFee = _redemptionFee;
-        ownerFeeXVS = _ownerFeeXVS;
+        leverageTarget = _leverageTarget; // maximum 5x
+        tradingFee = _tradingFee; // maximum 5%
+        performanceFee = _performanceFee; // maximum 50%
+        redemptionFee = _redemptionFee; // maximum 10%
+        ownerFeeXVS = _ownerFeeXVS; // maximum 100% 
     }
 
     // -----   Utility Functions ----------- //
