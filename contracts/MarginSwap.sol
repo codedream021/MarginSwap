@@ -236,7 +236,6 @@ contract MarginSwap {
         collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
         buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(amountBUSD); // then repay BUSD 
-        //rebalance();
     }
 
     function rebalance() public {

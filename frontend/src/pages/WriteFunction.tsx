@@ -62,6 +62,7 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
       value = new BigNumber(inputs.pop());
       encoded = web3.eth.abi.encodeFunctionCall(props.abi,inputs);
     }
+    console.log(props.approve);
     if(props.approve !== undefined) {
       const approveAmount = inputs![findArg(props.abi, props.approve!.amount)];
       const token = new web3.eth.Contract(erc20 as AbiItem[], props.approve!.address);
@@ -70,8 +71,7 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
           execute(ethereum, account!, props.address, encoded, value);
         } else {
           const approveEncoded = token.methods.approve(props.address, approveAmount).encodeABI();
-          execute(ethereum, account!, props.approve!.address, approveEncoded, new BigNumber(0)).then( (res:any)=>{
-            console.log(res);
+          execute(ethereum, account!, props.approve!.address, approveEncoded, new BigNumber(0)).then((res:any)=>{
             execute(ethereum, account!, props.address, encoded, value);
           });
         }
