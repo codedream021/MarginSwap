@@ -98,13 +98,13 @@ contract MarginSwap {
     }
 
     function mBNBtoBNB() public returns(uint) { // in BNB value
-        uint equityBNB = collateralBNB() - getAssetAmount(borrowedBUSD(), priceBNB());
+        int equityBNB = int256(collateralBNB()) - int256(getAssetAmount(borrowedBUSD(), priceBNB()));
         if (equityBNB < 0) { // if negative equity 
             return 0; // mBNB worthless
-        } else if (equityBNB = 0) { // starting conditions 
+        } else if (equityBNB == 0) { // starting conditions 
             return 1e18; // 1 BNB for 1 mBNB
         } else {
-            return equityBNB * 1e18 / mbnb.totalSupply();
+            return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
 
@@ -145,7 +145,7 @@ contract MarginSwap {
         venus.enterMarkets(market);
     }
 
-    function collateralSupply(uint amountBNB) internal { supply BNB as collateral 
+    function collateralSupply(uint amountBNB) internal {  //supply BNB as collateral 
         vBNB.mint{value:amountBNB}();
     }
 
