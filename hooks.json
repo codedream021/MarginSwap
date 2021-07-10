@@ -29,7 +29,7 @@
           "match":
           {
             "type": "value",
-            "value": "refs/heads/main",
+            "value": "refs/heads/dev",
             "parameter":
             {
               "source": "payload",
