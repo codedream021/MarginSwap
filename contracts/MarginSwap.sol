@@ -36,6 +36,7 @@ contract MarginSwap {
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
+    uint public ownerFeeXVS = 5000; // 50% is 5000. 50% of XVS redemption goes to owner at rebalance
     uint public slippage = 100; 
 
     modifier onlyOwner() {
@@ -70,11 +71,12 @@ contract MarginSwap {
         slippage = _slippage;
     }
 
-    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee) onlyOwner external {
-        leverageTarget = _leverageTarget;
-        tradingFee = _tradingFee;
-        performanceFee = _performanceFee;
-        redemptionFee = _redemptionFee;
+    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS) onlyOwner external {
+        leverageTarget = _leverageTarget;   // maximum 4x (40000)
+        tradingFee = _tradingFee;           // maximum 5% (500)
+        performanceFee = _performanceFee;  // maximum 50% (5000)
+        redemptionFee = _redemptionFee;    // maximum 10% (1000)
+        ownerFeeXVS = _ownerFeeXVS;        // maximum 100% (10000)
     }
 
     // -----   Utility Functions ----------- //
@@ -96,11 +98,13 @@ contract MarginSwap {
     }
 
     function mBNBtoBNB() public returns(uint) { // in BNB value
-        uint equityBNB = collateralBNB() - getAssetAmount(borrowedBUSD(), priceBNB());
-        if (equityBNB <= 0) {
+        int equityBNB = int256(collateralBNB()) - int256(getAssetAmount(borrowedBUSD(), priceBNB()));
+        if (equityBNB < 0) { // if negative equity 
+            return 0; // mBNB worthless
+        } else if (equityBNB == 0) { // starting conditions 
             return 1e18; // 1 BNB for 1 mBNB
         } else {
-            return equityBNB * 1e18 / mbnb.totalSupply();
+            return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
 
@@ -119,43 +123,33 @@ contract MarginSwap {
         uint bnbAmount = getValue(mBNBamount, priceAsBNB);
         uint feeAmount = fraction(bnbAmount, redemptionFee);
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
-        if(address(this).balance < amountBNB){
-            collateralWithdrawal(amountBNB - address(this).balance); // withdrawal collateral from Venus
-        }
-        // send amountBNB back to user
-        payable(msg.sender).transfer(amountBNB);
+        collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
+        payable(msg.sender).transfer(amountBNB); // send amountBNB back to user
         rebalance();
     }
 
+
     // ----- Venus Functions ------ // 
-    function collateralBNB() public returns(uint) { 
-        // fetch collateral BNB quantity from Venus 
-        // return that value
+    function collateralBNB() public returns(uint) { // amount of BNB collateral on Venus
         return vBNB.balanceOfUnderlying(address(this));
     }
 
-    function borrowedBUSD() public returns(uint) { 
-        // fetch borrow BUSD quantity from Venus 
-        // return that value 
+    function borrowedBUSD() public returns(uint) { // amount of BUSD borrowed from Venus
         return vBusd.borrowBalanceCurrent(address(this));
     }
 
-    function enableCollateral() public onlyOwner {
-        // must turn collateral
+    function enableCollateral() public onlyOwner { // True, to accumulate XVS for collateral 
         address[] memory market = new address[](2);
         market[0] = address(vBNB);
         market[1] = address(vBusd);
         venus.enterMarkets(market);
     }
 
-    function collateralSupply(uint amountBNB) internal {
-        // add more BNB as collateral
-        // it is ok to not "require" on this since vBNB handles error on mint
+    function collateralSupply(uint amountBNB) internal {  //supply BNB as collateral 
         vBNB.mint{value:amountBNB}();
     }
 
-    function collateralWithdrawal(uint amountBNB) internal {
-        // withdrawal BNB collateral
+    function collateralWithdrawal(uint amountBNB) internal { // withdrawal BNB collateral 
         borrowRepay(busd.balanceOf(address(this))); // first repay BUSD with collateralBNB
         uint256 res = vBNB.redeemUnderlying(amountBNB);
         require(res == 0, "!withdraw");
@@ -237,12 +231,11 @@ contract MarginSwap {
         collateralSupply(bought); // then post as collateral 
     }
 
-    function repayBNB(uint amountBUSD) internal { // repays BUSD with BNB in collateral 
+    function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
         uint256 withdrawAmount = getValue(amountBUSD, priceBNB());
-        //collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
-        //buyBUSD(amountBUSD); // then sell BNB for BUSD 
+        collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
+        buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(amountBUSD); // then repay BUSD 
-        rebalance();
     }
 
     function rebalance() public {
@@ -262,8 +255,8 @@ contract MarginSwap {
         redeemXVS();
         uint256 xvsBalance = xvs.balanceOf(address(this));
         // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-        xvs.transfer(msg.sender, xvsBalance/2);
-        xvs.transfer(owner, xvsBalance/2);
+        xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
+        xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
     }
 
     function rebalanceAmount() public returns(int256) {

@@ -62,6 +62,7 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
       value = new BigNumber(inputs.pop());
       encoded = web3.eth.abi.encodeFunctionCall(props.abi,inputs);
     }
+    console.log(props.approve);
     if(props.approve !== undefined) {
       const approveAmount = inputs![findArg(props.abi, props.approve!.amount)];
       const token = new web3.eth.Contract(erc20 as AbiItem[], props.approve!.address);
@@ -70,8 +71,7 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
           execute(ethereum, account!, props.address, encoded, value);
         } else {
           const approveEncoded = token.methods.approve(props.address, approveAmount).encodeABI();
-          execute(ethereum, account!, props.approve!.address, approveEncoded, new BigNumber(0)).then( (res:any)=>{
-            console.log(res);
+          execute(ethereum, account!, props.approve!.address, approveEncoded, new BigNumber(0)).then((res:any)=>{
             execute(ethereum, account!, props.address, encoded, value);
           });
         }
@@ -89,10 +89,10 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
               {props.abi.name}
             </legend>{
               props.abi.inputs!.map((x,index)=>{
-                return (<div className="form-group">{x.name} : <input name={"input."+x.name+"#"+index} onChange={handleChange} type="text" placeholder={x.type.toString() + (props.decimals != undefined && props.decimals![x.name] !=undefined?" - decimals : " +props.decimals![x.name] :"")}/></div>);
+                return (<div key={props.abi.name + x.name} className="form-group">{x.name} : <input name={"input."+x.name+"#"+index} onChange={handleChange} type="text" placeholder={x.type.toString() + (props.decimals != undefined && props.decimals![x.name] !=undefined?" - decimals : " +props.decimals![x.name] :"")}/></div>);
               })
             }
-            {props.abi.stateMutability === "payable" ? <div> <input name={"input.payableAmount#"+props.abi.inputs!.length} onChange={handleChange} type="text" placeholder={"value to send - decimals : 18"}/> </div> : ""}
+  {props.abi.stateMutability === "payable" ? <div key={props.abi.name + "submit_button"}> <input name={"input.payableAmount#"+props.abi.inputs!.length} onChange={handleChange} type="text" placeholder={"value to send - decimals : 18"}/> </div> : ""}
             <button className="btn btn-default" onClick={handleSubmit}>
               exec
             </button>

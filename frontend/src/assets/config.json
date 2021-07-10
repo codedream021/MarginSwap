@@ -2,7 +2,7 @@
   "tabs" : [
     {
       "abi" : "MarginSwap",
-      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
+      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
       "name" : "MarginSwap",
       "functions": [
         "priceBNB",
@@ -27,30 +27,59 @@
       },
       "approves": {
         "redeemBNB": {
-          "address": "0x1193b549106b92677e491aeb8766bd22cc36c84b",
+          "address": "0x0382c6af3c4b9607eb96d80fa2f196ad70da639f",
           "amount" : "mBNBamount"
         }
       }
     },
     {
       "abi" : "MarginSwap",
-      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
+      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
       "name" : "admin",
       "functions": [
         "enableCollateral",
         "transferOwnership",
         "setSlippage",
-        "owner"
+        "owner",
+        "updateRatio",
+        "leverageTarget",
+        "tradingFee",
+        "performanceFee",
+        "redemptionFee",
+        "slippage"
       ],
       "decimals": {
         "setSlippage" : {
           "_slippage" : 2
+        },
+        "updateRatio" : {
+          "_leverageTarget" : 2,
+          "_tradingFee" : 2,
+          "_performanceFee" : 2,
+          "_redemptionFee" : 2
+        },
+        "leverageTarget":{
+          "leverageTarget": 2
+        },
+        "tradingFee": {
+          "tradingFee": 2
+        },
+        "performanceFee": {
+          "performanceFee": 2
+        },
+        "redemptionFee": {
+          "redemptionFee": 2
+        },
+        "slippage": {
+          "slippage": 2
         }
+      },
+      "approves":{
       }
     },
     {
       "abi" : "MarginSwap",
-      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
+      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
       "name": "globalValues",
       "functions": [
         "rebalance",
@@ -76,11 +105,13 @@
         "rebalanceAmount": {
           "rebalanceAmount" :18
         }
+      },
+      "approves":{
       }
     },
     {
       "abi" : "mBNB",
-      "address" : "0x1193b549106b92677e491aeb8766bd22cc36c84b",
+      "address" : "0x0382c6af3c4b9607eb96d80fa2f196ad70da639f",
       "name": "mBNB",
       "functions": [
         "approve",
@@ -91,6 +122,8 @@
         "totalSupply": {
           "totalSupply": 18
         }
+      },
+      "approves":{
       }
     }
   ]
