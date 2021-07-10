@@ -1,0 +1,12 @@
+[Unit]
+Description=Webhook Service
+After=network.target
+
+[Service]
+User=root
+Restart=on-failure
+WorkingDirectory=/home/MarginSwap/
+ExecStart=/usr/bin/webhook -hooks /home/MarginSwap/hooks.json -verbose -port 9001
+
+[Install]
+WantedBy=multi-user.target
