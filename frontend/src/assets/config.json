@@ -45,7 +45,8 @@
         "leverageTarget",
         "tradingFee",
         "performanceFee",
-        "redemptionFee"
+        "redemptionFee",
+        "slippage"
       ],
       "decimals": {
         "setSlippage" : {
@@ -68,6 +69,9 @@
         },
         "redemptionFee": {
           "redemptionFee": 2
+        },
+        "slippage": {
+          "slippage": 2
         }
       },
       "approves":{
