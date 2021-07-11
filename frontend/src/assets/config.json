@@ -2,7 +2,7 @@
   "tabs" : [
     {
       "abi" : "MarginSwap",
-      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
+      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
       "name" : "MarginSwap",
       "functions": [
         "priceBNB",
@@ -27,14 +27,14 @@
       },
       "approves": {
         "redeemBNB": {
-          "address": "0x0382c6af3c4b9607eb96d80fa2f196ad70da639f",
+          "address": "0x1193b549106b92677e491aeb8766bd22cc36c84b",
           "amount" : "mBNBamount"
         }
       }
     },
     {
       "abi" : "MarginSwap",
-      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
+      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
       "name" : "admin",
       "functions": [
         "enableCollateral",
@@ -45,8 +45,7 @@
         "leverageTarget",
         "tradingFee",
         "performanceFee",
-        "redemptionFee",
-        "slippage"
+        "redemptionFee"
       ],
       "decimals": {
         "setSlippage" : {
@@ -69,9 +68,6 @@
         },
         "redemptionFee": {
           "redemptionFee": 2
-        },
-        "slippage": {
-          "slippage": 2
         }
       },
       "approves":{
@@ -79,7 +75,7 @@
     },
     {
       "abi" : "MarginSwap",
-      "address" : "0xD39e7f1AF5E138bD2484dB9c3971Ac674065E836",
+      "address" : "0x63201e825A333dB8Ba99B239855F07354166eb16",
       "name": "globalValues",
       "functions": [
         "rebalance",
@@ -111,7 +107,7 @@
     },
     {
       "abi" : "mBNB",
-      "address" : "0x0382c6af3c4b9607eb96d80fa2f196ad70da639f",
+      "address" : "0x1193b549106b92677e491aeb8766bd22cc36c84b",
       "name": "mBNB",
       "functions": [
         "approve",
