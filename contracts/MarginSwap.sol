@@ -37,7 +37,7 @@ contract MarginSwap {
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
     uint public ownerFeeXVS = 5000; // 50% is 5000. 50% of XVS redemption goes to owner at rebalance
-    uint public slippage = 100; 
+    uint public slippage = 100; // 100 is 1% slippage
 
     modifier onlyOwner() {
         require(msg.sender == owner, "!owner");
