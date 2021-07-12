@@ -32,7 +32,7 @@ contract MarginSwap {
     // ADMIN adjustable
     uint public constant DENOMINATOR = 10000;
     uint public constant PRICE_DENOMINATOR = 1e18;
-    uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150
+    uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150. 
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
