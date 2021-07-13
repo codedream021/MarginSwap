@@ -73,7 +73,7 @@ contract MarginSwap {
         slippage = _slippage;
     }
 
-    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS, uint _threshold) onlyOwner external {
+    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS, uint256 _threshold) onlyOwner external {
         leverageTarget = _leverageTarget;   // maximum 4x (40000)
         tradingFee = _tradingFee;           // maximum 5% (500)
         performanceFee = _performanceFee;  // maximum 50% (5000)
