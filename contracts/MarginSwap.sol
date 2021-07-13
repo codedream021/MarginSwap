@@ -158,7 +158,7 @@ contract MarginSwap {
     function collateralWithdrawal(uint amountBNB) internal { // withdrawal BNB collateral 
         borrowRepay(busd.balanceOf(address(this))); // first repay BUSD with collateralBNB
         uint256 res = vBNB.redeemUnderlying(amountBNB*2);
-        borrowRepay(amountBUSD)
+        borrowRepay(amountBUSD); 
         require(res == 0, "!withdraw");
     }
 
