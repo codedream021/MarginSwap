@@ -3,7 +3,7 @@ server {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
-    if ($host = '142.93.148.200') {
+    if ($host = '167.71.64.25') {
         return 444;
     }
 
@@ -20,6 +20,15 @@ server {
     listen 443 ssl default_server;
     server_name marginswap.io;
 
+    server_tokens off;
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload";
+
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+    add_header Pragma "no-cache";
+
     ssl_certificate /etc/letsencrypt/live/marginswap.io/fullchain.pem; # managed by Certbot
     ssl_certificate_key /etc/letsencrypt/live/marginswap.io/privkey.pem; # managed by Certbot
     include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
@@ -31,16 +40,16 @@ server {
 
     error_page 503 /maintenance_page.html;
     location = /maintenance_page.html {
-        root /home/django/;
+        root /home/;
     }
 
-#    location = /robots.txt {
-#       add_header Content-Type text/plain;
-#       return 200 "User-agent: Disallow: /";
-#    }
-    
+    location = /robots.txt {
+       add_header Content-Type text/plain;
+       return 200 "User-agent: Disallow: /";
+    }
+
     location / {
-        if (-f /home/django/maintenance_page.html) {
+        if (-f /home/maintenance_page.html) {
             return 503;
         }
         root   /home/MarginSwap/frontend/dist/;
@@ -56,7 +65,7 @@ server {
         return 444;
     }
 
-    if ($host = '142.93.148.200') {
+    if ($host = '167.71.64.25') {
         return 444;
     }
 
