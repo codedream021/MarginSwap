@@ -155,13 +155,13 @@ contract MarginSwap {
         require(res == 0, "!withdraw");
     }
 
-    function borrow(uint amountBUSD) internal {
+    function borrow(uint amountBUSD) internal { // borrow BUSD from Venus
         // make sure within Borrow Limit
         // borrow amountBUSD from Venus
         require(vBusd.borrow(amountBUSD) == 0, "!borrow");
     }
 
-    function borrowRepay(uint amountBUSD) internal {
+    function borrowRepay(uint amountBUSD) internal { // repay BUSD to Venus
         // make sure smart contract has enough BUSD to repay
         // repay borrowed BUSD by amountBUSD
         busd.approve(address(vBusd), amountBUSD);
