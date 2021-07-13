@@ -32,12 +32,14 @@ contract MarginSwap {
     // ADMIN adjustable
     uint public constant DENOMINATOR = 10000;
     uint public constant PRICE_DENOMINATOR = 1e18;
-    uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150
+    uint public leverageTarget = 20000; // equals 2x leverage(200%). 1.5x would be 150. 
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
     uint public ownerFeeXVS = 5000; // 50% is 5000. 50% of XVS redemption goes to owner at rebalance
-    uint public slippage = 100; 
+    uint public threshold = 1000; // 10% is 1000
+    uint public slippage = 100; // 100 is 1% slippage
+   
 
     modifier onlyOwner() {
         require(msg.sender == owner, "!owner");
@@ -71,12 +73,13 @@ contract MarginSwap {
         slippage = _slippage;
     }
 
-    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS) onlyOwner external {
+    function updateRatio(uint256 _leverageTarget, uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _ownerFeeXVS, uint256 _threshold) onlyOwner external {
         leverageTarget = _leverageTarget;   // maximum 4x (40000)
         tradingFee = _tradingFee;           // maximum 5% (500)
         performanceFee = _performanceFee;  // maximum 50% (5000)
         redemptionFee = _redemptionFee;    // maximum 10% (1000)
         ownerFeeXVS = _ownerFeeXVS;        // maximum 100% (10000)
+        threshold = _threshold;            // maximum 50%? 
     }
 
     // -----   Utility Functions ----------- //
@@ -155,13 +158,13 @@ contract MarginSwap {
         require(res == 0, "!withdraw");
     }
 
-    function borrow(uint amountBUSD) internal {
+    function borrow(uint amountBUSD) internal { // borrow BUSD from Venus
         // make sure within Borrow Limit
         // borrow amountBUSD from Venus
         require(vBusd.borrow(amountBUSD) == 0, "!borrow");
     }
 
-    function borrowRepay(uint amountBUSD) internal {
+    function borrowRepay(uint amountBUSD) internal { // repay BUSD to Venus
         // make sure smart contract has enough BUSD to repay
         // repay borrowed BUSD by amountBUSD
         busd.approve(address(vBusd), amountBUSD);
@@ -246,7 +249,7 @@ contract MarginSwap {
         }
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
-        if (amount > 0) { // could have it as a threshold
+        if (amount > borrowedBUSD()*(threshold/DENOMINATOR)) { // could have it as a threshold
             borrowBNB(uint256(amount)); // borrow DAI to buy BNB
         } else {
             // require();
