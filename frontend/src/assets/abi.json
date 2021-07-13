@@ -1,7 +1,43 @@
 {
-  "MarginSwap" : [
+"MarginSwap":[
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_busd",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_venus",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_xvs",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_vBNB",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_vBusd",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_venusOracle",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_pancakeRouter",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -54,7 +90,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -80,7 +116,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -151,6 +187,19 @@
   },
   {
     "inputs": [],
+    "name": "ownerFeeXVS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "pancakeRouter",
     "outputs": [
       {
@@ -205,7 +254,7 @@
         "type": "int256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -306,6 +355,11 @@
       {
         "internalType": "uint256",
         "name": "_redemptionFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_ownerFeeXVS",
         "type": "uint256"
       }
     ],
