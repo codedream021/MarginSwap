@@ -16,9 +16,9 @@ const Menu: React.FC<Props> = ({ tabs,reset,setCollapsed,collapsed }) => {
     <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={()=>setCollapsed(!collapsed)} />
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className=" ms-auto">
-        {tabs.map((tab: any) => {
+        {/* {tabs.map((tab: any) => {
           return <Tab key={tab.name}>{tab.name}</Tab>;
-        })}
+        })} */}
         <Nav.Link className="ml-auto" onClick={() => reset()}>disconnect</Nav.Link>
       </Nav>
     </Navbar.Collapse>

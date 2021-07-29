@@ -40,15 +40,14 @@ export function ViewFunction(props: ViewFunctionProps) : React.ReactElement {
       }
     });
   }
+  console.log(props);
 
   return(
     <li>
       <div>
         <b>
-          {props.abi.name}
+          {props.abi.name}: {" "} 
         </b>
-      </div>
-      <div>
         {value}
       </div>
     </li>

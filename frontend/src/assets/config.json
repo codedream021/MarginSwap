@@ -1,41 +1,44 @@
 {
-  "tabs" : [
+  "tabs": [
     {
-      "abi" : "MarginSwap",
-      "address" : "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
-      "name" : "MarginSwap",
+      "abi": "MarginSwap",
+      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "name": "Swap",
       "functions": [
         "priceBNB",
+        "tradingFee",
+        "performanceFee",
+        "redemptionFee",
         "depositBNB",
         "redeemBNB",
         "collateralBNB",
         "borrowedBUSD"
       ],
       "decimals": {
-        "priceBNB" : {
-          "priceBNB" : 18
+        "priceBNB": {
+          "priceBNB": 18
         },
-        "collateralBNB" : {
-          "collateralBNB" : 18
+        "collateralBNB": {
+          "collateralBNB": 18
         },
-        "borrowedBUSD" : {
-          "borrowedBUSD" : 18
+        "borrowedBUSD": {
+          "borrowedBUSD": 18
         },
-        "redeemBNB" : {
-          "mBNBamount" : 18
+        "redeemBNB": {
+          "mBNBamount": 18
         }
       },
       "approves": {
         "redeemBNB": {
           "address": "0x3dE03f38a4c84cbdB612ef1aDe9027B3D1c6ea3E",
-          "amount" : "mBNBamount"
+          "amount": "mBNBamount"
         }
       }
     },
     {
-      "abi" : "MarginSwap",
-      "address" : "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
-      "name" : "admin",
+      "abi": "MarginSwap",
+      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "name": "admin",
       "functions": [
         "enableCollateral",
         "transferOwnership",
@@ -49,16 +52,16 @@
         "slippage"
       ],
       "decimals": {
-        "setSlippage" : {
-          "_slippage" : 2
+        "setSlippage": {
+          "_slippage": 2
         },
-        "updateRatio" : {
-          "_leverageTarget" : 2,
-          "_tradingFee" : 2,
-          "_performanceFee" : 2,
-          "_redemptionFee" : 2
+        "updateRatio": {
+          "_leverageTarget": 2,
+          "_tradingFee": 2,
+          "_performanceFee": 2,
+          "_redemptionFee": 2
         },
-        "leverageTarget":{
+        "leverageTarget": {
           "leverageTarget": 2
         },
         "tradingFee": {
@@ -74,57 +77,19 @@
           "slippage": 2
         }
       },
-      "approves":{
-      }
+      "approves": {}
     },
     {
-      "abi" : "MarginSwap",
-      "address" : "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
-      "name": "globalValues",
-      "functions": [
-        "rebalance",
-        "leverageTarget",
-        "tradingFee",
-        "performanceFee",
-        "redemptionFee",
-        "rebalanceAmount"
-      ],
-      "decimals":{
-        "leverageTarget":{
-          "leverageTarget": 2
-        },
-        "tradingFee": {
-          "tradingFee": 2
-        },
-        "performanceFee": {
-          "performanceFee": 2
-        },
-        "redemptionFee": {
-          "redemptionFee": 2
-        },
+      "abi": "rebalance",
+      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "name": "Rebalance",
+      "functions": ["rebalance", "rebalanceAmount"],
+      "decimals": {
         "rebalanceAmount": {
-          "rebalanceAmount" :18
+          "rebalanceAmount": 18
         }
       },
-      "approves":{
-      }
-    },
-    {
-      "abi" : "mBNB",
-      "address" : "0x3dE03f38a4c84cbdB612ef1aDe9027B3D1c6ea3E",
-      "name": "mBNB",
-      "functions": [
-        "approve",
-        "transfer",
-        "totalSupply"
-      ],
-      "decimals":{
-        "totalSupply": {
-          "totalSupply": 18
-        }
-      },
-      "approves":{
-      }
+      "approves": {}
     }
   ]
 }

@@ -2,7 +2,7 @@ import React from "react";
 import config from "./assets/config.json";
 import { AbiItem } from "web3-utils";
 import { useWallet, UseWalletProvider } from "use-wallet";
-import { Tabs, TabPanel } from "react-tabs";
+import { Tabs, TabPanel, Tab, TabList } from "react-tabs";
 import abis from "./assets/abi.json";
 import { TabComponent } from "./pages/Tab";
 import Menu from "./pages/Menu";
@@ -22,17 +22,23 @@ function App(): React.ReactElement {
               {Menu({ tabs: config.tabs, reset, setCollapsed, collapsed })}
               <div
                 className="content"
-                style={collapsed ? { marginTop: "240px" } : {}}
+                style={collapsed ? { marginTop: "100px" } : {}}
               >
                 <nav className="navbar navbar-light navbar-glass navbar-top navbar-expand">
-                  <div className="logo terminal-prompt">User : {account}</div>
+                  <div className="logo terminal-prompt m-3">User : {account}</div>
                 </nav>
+                <TabList className="new-navigation">
+                {config.tabs.map((tab: any) => {
+          return <Tab key={tab.name}>{tab.name}</Tab>;
+        })}
+                </TabList>
                 <div className="row g-0">
                   {config.tabs.map((x) => {
                     return (
                       <TabPanel key={x.name}>
                         <TabComponent
                           address={x.address}
+                          tabName={x.name}
                           decimals={x.decimals}
                           approves={x.approves}
                           writeFunctions={typedAbi[x.abi]
@@ -51,6 +57,14 @@ function App(): React.ReactElement {
                                 x.functions.includes(String(f.name)) &&
                                 f.stateMutability == "view"
                             )}
+                            feeFunctions={typedAbi[x.abi]
+                              .filter((y) => y.name?.includes("fee"))
+                              .filter((y) => y.name !== undefined)
+                              .filter(
+                                (f) =>
+                                  x.functions.includes(String(f.name)) &&
+                                  f.stateMutability == "view"
+                              )}
                         />
                       </TabPanel>
                     );
@@ -68,7 +82,7 @@ function App(): React.ReactElement {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className=" ms-auto">
             <Nav.Link className="ml-auto" onClick={() => connect("injected")}>
-            Login now MetaMask
+            Connect wallet
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

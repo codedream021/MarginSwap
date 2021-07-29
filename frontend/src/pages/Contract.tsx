@@ -33,6 +33,7 @@ export function ContractComponent(props: ContractProps) : React.ReactElement {
             approves={x.approves}
             writeFunctions={typedAbi[x.abi].filter(y=>y.type === "function").filter(y=>y.name!== undefined).filter(f=> x.functions.includes(String(f.name)) && f.stateMutability != "view")}
             viewFunctions={typedAbi[x.abi].filter(y=>y.type === "function").filter(y=>y.name!== undefined).filter(f=> x.functions.includes(String(f.name)) && f.stateMutability == "view")}
+            feeFunctions={typedAbi[x.abi].filter(y=>y.type === "function" && y.name?.includes('fee'))?.filter(y=>y.name!== undefined).filter(f=> x.functions.includes(String(f.name)) && f.stateMutability == "view")}
           />
         </TabPanel>
         })

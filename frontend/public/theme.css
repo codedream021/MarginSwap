@@ -1381,12 +1381,14 @@ textarea {
 
 fieldset {
   padding: 1em !important;
+  margin-bottom: 1.5rem!important;
   border: 1px solid blue !important;
 }
 
 legend {
-  float: unset !important;
-  width: auto !important;
+  /* float: unset !important; */
+  border: 1px solid;
+  width: 100% !important;
     padding: 0 13px !important;
   margin-bottom: 0.5rem;
   font-size: calc(1.275rem + 0.5vw) !important;
@@ -28476,13 +28478,21 @@ div[data-collapse] + .kanban-item,
 
 
 
-
+.new-navigation{
+  width: 100%;
+  text-align: center;
+}
 .react-tabs__tab{
   padding: 0.5rem 1rem;
-  color:white;
+  display: inline-block;
+  /* color:white; */
+}
+.react-tabs__tab--selected{
+  background-color: #0d6ef2;
+  color: white;
 }
 .react-tabs__tab:hover{
-  background-color: #0d6ef2;
+  background-color: #4b90f0;
   cursor:pointer;
   color:white;
 }
