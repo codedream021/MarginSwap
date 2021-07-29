@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { useWallet } from 'use-wallet';
 import Web3 from 'web3';
 import {AbiItem} from 'web3-utils';
@@ -28,7 +28,7 @@ function findArg(abi: AbiItem, name: string) : number{
 }
 export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
   const [inputs, setInputs] = useState(new Array(props.abi.stateMutability === "payable" ? props.abi.inputs!.length + 1 : props.abi.inputs!.length).fill(''));
-  const { account, ethereum } = useWallet();
+  const { account, ethereum }:{account?:any,ethereum?:any} = useWallet();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -84,16 +84,16 @@ export function WriteFunction(props: WriteFunctionProps) : React.ReactElement {
   return(
       <section>
         <form>
-          <fieldset>
+          <fieldset className="rounded-3 shadow">
             <legend>
               {props.abi.name}
             </legend>{
               props.abi.inputs!.map((x,index)=>{
-                return (<div key={props.abi.name + x.name} className="form-group">{x.name} : <input name={"input."+x.name+"#"+index} onChange={handleChange} type="text" placeholder={x.type.toString() + (props.decimals != undefined && props.decimals![x.name] !=undefined?" - decimals : " +props.decimals![x.name] :"")}/></div>);
+                return (<div key={props.abi.name + x.name} className="form-group my-2">{x.name} : <input className="form-control" name={"input."+x.name+"#"+index} onChange={handleChange} type="text" placeholder={x.type.toString() + (props.decimals != undefined && props.decimals![x.name] !=undefined?" - decimals : " +props.decimals![x.name] :"")}/></div>);
               })
             }
-  {props.abi.stateMutability === "payable" ? <div key={props.abi.name + "submit_button"}> <input name={"input.payableAmount#"+props.abi.inputs!.length} onChange={handleChange} type="text" placeholder={"value to send - decimals : 18"}/> </div> : ""}
-            <button className="btn btn-default" onClick={handleSubmit}>
+  {props.abi.stateMutability === "payable" ? <div key={props.abi.name + "submit_button"} className="form-group m-2" > <input className="form-control" name={"input.payableAmount#"+props.abi.inputs!.length} onChange={handleChange} type="text" placeholder={"value to send - decimals : 18"}/> </div> : ""}
+            <button className="btn btn-primary" onClick={handleSubmit}>
               exec
             </button>
           </fieldset>

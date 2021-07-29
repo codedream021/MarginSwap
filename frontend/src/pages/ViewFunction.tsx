@@ -10,7 +10,7 @@ interface ViewFunctionProps {
   decimal?: any;
 }
 export function ViewFunction(props: ViewFunctionProps) : React.ReactElement {
-  const { ethereum } = useWallet();
+  const { ethereum }: {ethereum:any} = useWallet();
   const web3 = new Web3(ethereum);
   const [value, setValue] = useState('');
   const contract = new web3.eth.Contract([props.abi], props.address);

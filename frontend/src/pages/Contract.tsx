@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import { useWallet } from 'use-wallet';
 import { Config } from '../types/config';
 import abis from '../assets/abi.json';
@@ -13,6 +13,7 @@ import '../style/Tab.less';
 
 interface ContractProps {
   config : Config;
+  children: any;
 }
 type AbiType = { [key:string]: AbiItem[] }
 
@@ -23,11 +24,7 @@ export function ContractComponent(props: ContractProps) : React.ReactElement {
   let typedAbi = abis as AbiType;
   return(
     <Tabs>
-      <TabList>
-        {props.config.tabs.map((x) => {
-          return <Tab key={x.name}>{x.name}</Tab>
-        })}
-      </TabList>
+    {props.children}
       {props.config.tabs.map((x) => {
         return <TabPanel key={x.name}>
           <TabComponent

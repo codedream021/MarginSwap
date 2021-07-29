@@ -3,13 +3,13 @@ type ApproveParams = { address : string; amount: string};
 
 type Decimal = { [key:string]: ParameterDecimal[] }
 type Approve = { [key:string]: ApproveParams[] }
-interface Tab {
+export interface Tab {
   abi : string;
   address : string;
   name: string;
   functions: string[];
-  decimals: Decimal[];
-  approves: Approve[];
+  decimals: any;
+  approves: any;
 }
 
 export interface Config {
