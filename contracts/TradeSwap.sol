@@ -91,6 +91,10 @@ contract MarginSwap {
             return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
+    
+    function priceBNB() public view returns(uint256) { //have it exact BUSD
+        // get BNB/BUSD price from Uniswap
+    }
 
     // ----- Deposits & Withdrawals   ------ //
     
@@ -185,3 +189,6 @@ contract MarginSwap {
         }
     }
 
+
+
+}   
