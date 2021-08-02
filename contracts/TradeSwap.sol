@@ -162,7 +162,7 @@ contract MarginSwap {
     // ---- Rebalance Mechanism ----- // 
 
     function performanceFees() internal returns(uint256 fee){
-        uint mBNBtoBNBNow = mBNBtoBNB();
+        uint mBNBtoBNBNow = mBNBinBNB();
         if (mBNBtoBNBNow > ATHmBNB) {
             fee = getAssetAmount((mBNBtoBNBNow - ATHmBNB)*borrowedBUSD() / ATHmBNB, priceBNB());
             // send feeBNB to owner from collateralBNB
@@ -184,3 +184,4 @@ contract MarginSwap {
             }
         }
     }
+
