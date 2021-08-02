@@ -110,6 +110,16 @@ contract MarginSwap {
         uint bnbAmount = getValue(mBNBamount, priceInBNB);
         uint feeAmount = fraction(bnbAmount, redemptionFee);
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
+        
+        // Make sure enough BNB 
+        if (amountBNB > address(this).balance) {
+            difference = amountBNB - address(this).balance;
+            uint256 price = priceBNB();
+            uint amountBUSD = getValue(amountBNB, price);
+            buyBNB(amountBUSD);
+        }
+        
+        // send BNB to user 
         payable(msg.sender).transfer(amountBNB); // send amountBNB back to user
     }
 
@@ -165,9 +175,9 @@ contract MarginSwap {
         uint256 fee = performanceFees(); // run performance fee calculation
         sendFee(fee); // transfer fee to Owner
         //currentUnix =  update timestamp
-        if currentUnix >= lastUnix+rebalanceTime { // enough time has passed 
+        if (currentUnix >= lastUnix+rebalanceTime) { // enough time has passed 
             //lastUnix = currentUnix; // might need to set starting conditions 
-            if executeTrade > balanceBNB*(threshold/DENOMINATOR) { // buy BNB
+            if (executeTrade > balanceBNB*(threshold/DENOMINATOR)) { // buy BNB
                 buyBNB(amountBUSD);
             } else {
                 buyBUSD(amountBUSD);
