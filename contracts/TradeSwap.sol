@@ -1,34 +1,39 @@
 pragma solidity ^0.8.0;
 
 import "./mBNB.sol";
-import "./interfaces/IVBep20.sol";
 import "./interfaces/IPancakeRouter.sol";
 
 contract MarginSwap {
+    
     // POOLS
+    
     uint public ATHmBNB = 1e18; // highest price of mBNB in BUSD value
-    address public owner;
+    address public owner; //*make private 
 
     IMBNB public immutable mbnb;
     IERC20 public immutable busd;
 
     IPancakeRouter public immutable pancakeRouter;
 
+
     // ADMIN adjustable
+    
     uint public constant DENOMINATOR = 10000;
     uint public constant PRICE_DENOMINATOR = 1e18;
     uint public tradingFee = 100; // (tradingFee/DENOMINATOR)*100% each trade 1% (to Owner) each trade 1% (to Owner)
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
     uint public slippage = 100; // 100 is 1% slippage
+    uint public rebalanceTime = 6000; // 6000 is 6 hours 
    
-
     modifier onlyOwner() {
         require(msg.sender == owner, "!owner");
         _;
     } 
 
+
     // -----   Constructor ------------- //
+    
     constructor(address _busd, address _pancakeRouter) {
         owner = msg.sender;
         mBNB _mbnb = new mBNB();
@@ -40,21 +45,25 @@ contract MarginSwap {
     receive() external payable {
     }
 
+
     // -----   Admin Functions ------------- //
+    
     function transferOwnership(address _newOwner) onlyOwner external {
         owner = _newOwner;
     }
 
     function setSlippage(uint256 _slippage) onlyOwner external {
-        slippage = _slippage;
+        slippage = _slippage; // max slippage on PancakeSwap
     }
 
-    function updateRatio(uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _threshold) onlyOwner external {
+    function updateRatio(uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _threshold, uint256 rebalancetime) onlyOwner external {
         tradingFee = _tradingFee;           // maximum 5% (500)
         performanceFee = _performanceFee;  // maximum 50% (5000)
         redemptionFee = _redemptionFee;    // maximum 10% (1000)
         threshold = _threshold;            // maximum 50%? before rebalance/executeTrade 
+        rebalanceTime = _rebalanceTime;   // max time between rebalances 
     }
+
 
     // -----   Utility Functions ----------- //
 
@@ -74,36 +83,39 @@ contract MarginSwap {
         payable(owner).transfer(_fee);
     }
 
-    function mBNBtoBNB() public returns(uint) { // price of mBNB in BNB value
-        int equityBNB = bnb.balanceOf(address(this);
+    function mBNBinBNB() public returns(uint) { // price of mBNB in BNB value
+        int equityBNB = address(this).balance;
         if (equityBNB <= 0) { // if negative equity 
-            return 1e18; // mBNB worthless
+            return 1e18; // mBNB price in BNB 
         } else {
             return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
 
     // ----- Deposits & Withdrawals   ------ //
+    
     function depositBNB() public payable{
-        uint priceAsBNB = mBNBtoBNB();
-        uint mBNBamount = getValue(msg.value, priceAsBNB); // calculate amount of mBNB to mind and send
+        uint priceInBNB = mBNBinBNB();
+        uint mBNBamount = getValue(msg.value, priceInBNB); // calculate amount of mBNB to mint and send
         mbnb.mint(msg.sender, mBNBamount);// mint mBNBamount
     }
 
     function redeemBNB(uint mBNBamount) public {
-        uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
+        // receive and burn mBNB 
         mbnb.transferFrom(msg.sender, address(this), mBNBamount);
         mbnb.burn(mBNBamount);
-        uint bnbAmount = getValue(mBNBamount, priceAsBNB);
+        
+        // send BNB to User 
+        uint priceInBNB = mBNBinBNB(); // get price of mBNB (in BNB/mBNB)
+        uint bnbAmount = getValue(mBNBamount, priceInBNB);
         uint feeAmount = fraction(bnbAmount, redemptionFee);
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
         payable(msg.sender).transfer(amountBNB); // send amountBNB back to user
     }
 
 
-
-
     // ----- PancakeSwap Functions 
+    
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
         uint fee = getValue(fraction(amountBUSD,tradingFee), priceBNB());
@@ -136,13 +148,9 @@ contract MarginSwap {
         sendFee(fee);
     }
 
+
     // ---- Rebalance Mechanism ----- // 
-    
-    function tradeWait() internal returns(uint256 time) {
-        // unix + 6hrs 
-    }
-    
-    
+
     function performanceFees() internal returns(uint256 fee){
         uint mBNBtoBNBNow = mBNBtoBNB();
         if (mBNBtoBNBNow > ATHmBNB) {
@@ -152,11 +160,13 @@ contract MarginSwap {
         }
     }
     
-    function executeTrade(uint amountBUSD) onlyOwner() {
-        uint256 balanceBNB = bnb.address(this); // this isnt correct
+    function rebalance(uint amountBUSD) onlyOwner external {
+        uint256 balanceBNB = address(this).balance; // this isnt correct
         uint256 fee = performanceFees(); // run performance fee calculation
         sendFee(fee); // transfer fee to Owner
-        if unix >= tradeWait() { // enough time has passed 
+        //currentUnix =  update timestamp
+        if currentUnix >= lastUnix+rebalanceTime { // enough time has passed 
+            //lastUnix = currentUnix; // might need to set starting conditions 
             if executeTrade > balanceBNB*(threshold/DENOMINATOR) { // buy BNB
                 buyBNB(amountBUSD);
             } else {
