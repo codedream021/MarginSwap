@@ -54,7 +54,7 @@ contract TrendSwap {
         slippage = _slippage; // max slippage on PancakeSwap
     }
 
-    function updateRatio(uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _threshold, uint256 rebalancetime) onlyOwner external {
+    function updateRatio(uint256 _tradingFee, uint256 _performanceFee, uint256 _redemptionFee, uint256 _threshold) onlyOwner external {
         tradingFee = _tradingFee;           // maximum 5% (500)
         performanceFee = _performanceFee;  // maximum 50% (5000)
         redemptionFee = _redemptionFee;    // maximum 10% (1000)
@@ -129,15 +129,14 @@ contract TrendSwap {
     
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
-        uint fee = getValue(fraction(amountBUSD,tradingFee), priceBNB());
         uint256 price = priceBNB();
+        uint fee = getValue(fraction(amountBUSD,tradingFee), price);
         uint256 inputBNB = getAssetAmount(amountBUSD, price) * (DENOMINATOR + slippage) / DENOMINATOR; // 1% slippages
         address wbnb = pancakeRouter.WETH();
         address[] memory path = new address[](2);
         path[0] = wbnb;
         path[1] = address(busd);
         pancakeRouter.swapETHForExactTokens{value:inputBNB}(amountBUSD, path, address(this), block.timestamp);
-        // send tradingFeeAmount from collateralBNB to owner
         sendFee(fee);
     }
 
@@ -181,3 +180,7 @@ contract TrendSwap {
             buyBUSD(amountBUSD);
         }
     }
+
+
+
+}   
