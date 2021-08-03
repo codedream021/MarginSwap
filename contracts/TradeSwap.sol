@@ -24,11 +24,9 @@ contract MarginSwap {
     uint public performanceFee = 500;// 5% of new ATH gain on mBNB (to Owner)
     uint public redemptionFee = 100; // when redeem mBNB to cover slippage (to mBNB holders) 
     uint public slippage = 100; // 100 is 1% slippage
-    uint public rebalanceTime = 6000; // 6000 is 6 hours 
    
     modifier onlyOwner() {
         require(msg.sender == owner, "!owner");
-        _;
     } 
 
 
@@ -61,7 +59,6 @@ contract MarginSwap {
         performanceFee = _performanceFee;  // maximum 50% (5000)
         redemptionFee = _redemptionFee;    // maximum 10% (1000)
         threshold = _threshold;            // maximum 50%? before rebalance/executeTrade 
-        rebalanceTime = _rebalanceTime;   // max time between rebalances 
     }
 
 
@@ -92,7 +89,7 @@ contract MarginSwap {
         }
     }
     
-    function priceBNB() public view returns(uint256) { //have it exact BUSD
+    function priceBNB() public view returns(uint256) { 
         // get BNB/BUSD price from Uniswap
     }
 
@@ -117,7 +114,7 @@ contract MarginSwap {
         
         // Make sure enough BNB 
         if (amountBNB > address(this).balance) {
-            difference = amountBNB - address(this).balance;
+            difference = amountBNB*1.01 - address(this).balance;
             uint256 price = priceBNB();
             uint amountBUSD = getValue(amountBNB, price);
             buyBNB(amountBUSD);
@@ -178,17 +175,9 @@ contract MarginSwap {
         uint256 balanceBNB = address(this).balance; // this isnt correct
         uint256 fee = performanceFees(); // run performance fee calculation
         sendFee(fee); // transfer fee to Owner
-        //currentUnix =  update timestamp
-        if (currentUnix >= lastUnix+rebalanceTime) { // enough time has passed 
-            //lastUnix = currentUnix; // might need to set starting conditions 
-            if (executeTrade > balanceBNB*(threshold/DENOMINATOR)) { // buy BNB
-                buyBNB(amountBUSD);
-            } else {
-                buyBUSD(amountBUSD);
-            }
+        if (executeTrade > balanceBNB*(threshold/DENOMINATOR)) { // buy BNB
+            buyBNB(amountBUSD);
+        } else {
+            buyBUSD(amountBUSD);
         }
     }
-
-
-
-}   
