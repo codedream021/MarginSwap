@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "./mBNB.sol";
 import "./interfaces/IPancakeRouter.sol";
 
-contract MarginSwap {
+contract TrendSwap {
     
     // POOLS
     
