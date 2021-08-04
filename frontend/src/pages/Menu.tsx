@@ -4,11 +4,11 @@ import { Tab} from "react-tabs";
 import { Tab as TabType} from "../types/config";
 type Props = {
   tabs: TabType[];
-  reset: () => void;
+  resetCb: () => void;
   collapsed: boolean;
   setCollapsed:any;
 };
-const Menu: React.FC<Props> = ({ tabs,reset,setCollapsed,collapsed }) => {
+const Menu: React.FC<Props> = ({ tabs,resetCb,setCollapsed,collapsed }) => {
   return (
     <Navbar fixed="top" style={{backgroundColor:"#f3ba2f"}} expand="lg">
     <Navbar.Brand href="#home">
@@ -19,7 +19,7 @@ const Menu: React.FC<Props> = ({ tabs,reset,setCollapsed,collapsed }) => {
         {/* {tabs.map((tab: any) => {
           return <Tab key={tab.name}>{tab.name}</Tab>;
         })} */}
-        <Nav.Link className="ml-auto" onClick={() => reset()}>disconnect</Nav.Link>
+        <Nav.Link className="ml-auto" onClick={() => resetCb()}>disconnect</Nav.Link>
       </Nav>
     </Navbar.Collapse>
 </Navbar>

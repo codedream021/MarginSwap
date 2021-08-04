@@ -8,7 +8,6 @@
         "priceBNB",
         "tradingFee",
         "performanceFee",
-        "redemptionFee",
         "depositBNB",
         "redeemBNB",
         "mBNBtoBNB"
@@ -40,7 +39,7 @@
     {
       "abi": "MarginSwap",
       "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
-      "name": "admin",
+      "name": "Admin",
       "functions": [
         "enableCollateral",
         "transferOwnership",
@@ -51,6 +50,7 @@
         "tradingFee",
         "performanceFee",
         "redemptionFee",
+        "ownerFeeXVS",
         "slippage",
         "threshold"
       ],

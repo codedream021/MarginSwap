@@ -3,6 +3,7 @@
     {
       "inputs": [],
       "name": "rebalance",
+      "btnName": "Rebalance",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -156,6 +157,9 @@
   {
     "inputs": [],
     "name": "depositBNB",
+    "showName": "Buy mBNB",
+    "placeholder": "enter BNB to swap for mBNB",
+    "btnName": "Sell mBNB",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -163,6 +167,8 @@
   {
     "inputs": [],
     "name": "enableCollateral",
+    "showName": "Enable Collateral",
+    "btnName": "Set",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -191,6 +197,7 @@
       }
     ],
     "stateMutability": "view",
+    "round": true,
     "type": "function"
   },
   {
@@ -248,6 +255,7 @@
   {
     "inputs": [],
     "name": "performanceFee",
+    "showName": "Performance Fee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -269,11 +277,13 @@
       }
     ],
     "stateMutability": "view",
+    "round": true,
     "type": "function"
   },
   {
     "inputs": [],
     "name": "rebalance",
+    "btnName": "Rebalance",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -300,6 +310,9 @@
       }
     ],
     "name": "redeemBNB",
+    "showName": "Sell mBNB",
+    "btnName": "Buy BNB",
+    "placeholder": "enter mBNB to swap for BNB",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -326,6 +339,8 @@
       }
     ],
     "name": "setSlippage",
+    "showName": "Set Slippage",
+    "btnName": "Set",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -343,9 +358,11 @@
     "stateMutability": "view",
     "type": "function"
   },
+  
   {
     "inputs": [],
     "name": "tradingFee",
+    "showName": "Trading Fee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -365,6 +382,8 @@
       }
     ],
     "name": "transferOwnership",
+    "showName": "transferOwnership",
+    "btnName": "Set",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

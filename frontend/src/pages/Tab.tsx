@@ -49,10 +49,10 @@ export function TabComponent(props: TabProps): React.ReactElement {
                   ? "Update ratios"
                   : props.tabName?.toLowerCase() === "rebalance"
                   ? "Rebalance statistics"
-                  : "Price and Supply"}
+                  : "Price"}
               </legend>
               <br />
-              <ul>
+              <ul style={{listStyle:"none"}}>
                 {props.viewFunctions
                   .filter(
                     (x) => x.inputs === undefined || x.inputs?.length == 0
@@ -63,6 +63,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                         key={props.address + x.name + x.inputs!.length}
                         address={props.address}
                         abi={x}
+                        prefix={props.tabName==="Swap" ? "$" : ""}
                         decimal={props.decimals[x.name!]}
                       />
                     );
@@ -101,7 +102,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
            
             {props.tabName?.toLowerCase() === "swap" && (
               <fieldset className="rounded-3 shadow-lg">
-                <legend>Fee functions</legend>
+                <legend>Fees</legend>
                 <ul>
                   {props.feeFunctions
                     .filter(
@@ -113,14 +114,15 @@ export function TabComponent(props: TabProps): React.ReactElement {
                           key={props.address + x.name + x.inputs!.length}
                           address={props.address}
                           abi={x}
+                          suffx="%"
                           decimal={props.decimals[x.name!]}
                         />
                       );
                     })}
                   <li>
                     <div>
-                      <b>withdrawal: </b>
-                      1%
+                      <b>mBNB Sell Fee: </b>
+                      1.0%
                     </div>
                   </li>
                 </ul>

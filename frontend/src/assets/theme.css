@@ -1381,6 +1381,7 @@ legend {
   margin-bottom: 0.5rem;
   font-size: calc(1.275rem + 0.5vw) !important;
   line-height: inherit;
+  font-weight: bold;
 }
 @media (min-width: 1200px) {
   legend {
@@ -27551,4 +27552,10 @@ div[data-collapse] + .kanban-item,
   background-color: rgb(243, 186, 20);
   cursor:pointer;
   color:white;
+}
+ul{
+  list-style: none;
+}
+b{
+  font-size: 18px;
 }

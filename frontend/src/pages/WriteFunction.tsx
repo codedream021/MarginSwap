@@ -107,24 +107,22 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
       <form>
         <fieldset className="rounded-3 shadow">
           {props.abi.name?.toLowerCase() !== "rebalance" && (
-            <legend>{props.abi.name}</legend>
+            <legend>{props.abi.showName || props.abi.name }</legend>
           )}
           {props.abi.inputs!.map((x, index) => {
             return (
               <div key={props.abi.name + x.name} className="form-group my-2">
-                {x.name} :{" "}
+                {x.name==="mBNBamount" ? "" : x.name}
                 <input
                   className="form-control"
                   name={"input." + x.name + "#" + index}
                   onChange={handleChange}
                   type="text"
-                  placeholder={
-                    x.type.toString() +
+                  placeholder={props.abi.placeholder || x.type.toString() +
                     (props.decimals != undefined &&
                     props.decimals![x.name] != undefined
                       ? " - decimals : " + props.decimals![x.name]
-                      : "")
-                  }
+                      : "")}
                 />
               </div>
             );
@@ -140,16 +138,14 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
                 name={"input.payableAmount#" + props.abi.inputs!.length}
                 onChange={handleChange}
                 type="text"
-                placeholder={"value to send - decimals : 18"}
+                placeholder={props.abi.placeholder}
               />{" "}
             </div>
           ) : (
             ""
           )}
           <button className="btn btn-primary" onClick={handleSubmit}>
-            {props.abi.name?.toLowerCase() === "rebalance"
-              ? "Rebalance"
-              : "exec"}
+            {props.abi.btnName || "exec"}
           </button>
         </fieldset>
       </form>

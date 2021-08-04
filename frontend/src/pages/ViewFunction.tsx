@@ -7,11 +7,13 @@ import Web3 from "web3";
 interface ViewFunctionProps {
   address: string;
   abi: AbiItem;
+  suffx?: string;
+  prefix?: string;
   decimal?: any;
 }
 export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
   const { ethereum }: { ethereum: any } = useWallet();
-  const priceBNBABI:AbiItem = {
+  const priceBNBABI: AbiItem = {
     inputs: [],
     name: "priceBNB",
     outputs: [
@@ -31,7 +33,7 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
   useEffect(() => {
     getValue();
     getBnbPrice();
-  },[]);
+  }, []);
   const getBnbPrice = () => {
     const contract = new web3.eth.Contract([priceBNBABI], props.address);
     contract.methods["priceBNB"]()
@@ -41,18 +43,16 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
           let concat = "";
           for (let i = 0; i < priceBNBABI.outputs!.length; i++) {
             concat +=
-            priceBNBABI.outputs![i].name +
+              priceBNBABI.outputs![i].name +
               " : " +
               data[priceBNBABI.outputs![i].name] +
               "\n";
-              setBnbprice(concat);
+            setBnbprice(concat);
           }
         } else {
           if (props.decimal != undefined) {
             let bn = new BigNumber(data);
-            setBnbprice(
-              bn.shiftedBy(-18).toString()
-            );
+            setBnbprice(bn.shiftedBy(-18).toString());
           } else {
             setBnbprice(data);
           }
@@ -78,7 +78,7 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
             let bn = new BigNumber(data);
             setValue(bn.shiftedBy(-props.decimal![props.abi.name!]).toString());
           } else {
-            setValue(data);
+            setValue(data?.length > 5 ? data : parseFloat(data).toFixed(1));
           }
         }
       });
@@ -86,8 +86,16 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
   return (
     <li>
       <div>
-        <b>{props.abi.name==="mBNBtoBNB" ? "price mBNB" :props.abi.name}: </b>
-        {props.abi.name==="mBNBtoBNB" ? parseFloat(value) * parseFloat(bnbprice) : value}
+        <b>
+          {props.abi.name === "mBNBtoBNB" ? "price mBNB" : (props.abi.showName || props.abi.name )}:{" "}
+        </b>
+        <span style={{ fontSize: "18px" }}>
+          {props.prefix && props.prefix}
+          {props.abi.name === "mBNBtoBNB"
+            ? (value * parseFloat(bnbprice)).toFixed(2)
+            : (props.abi.round ? value.substr(0, value.lastIndexOf(".") + 3) : value) }
+          {props.suffx && props.suffx}
+        </span>
       </div>
     </li>
   );
