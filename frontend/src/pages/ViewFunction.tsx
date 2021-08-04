@@ -1,54 +1,93 @@
-import React, {useState, useEffect} from 'react';
-import { useWallet } from 'use-wallet';
-import {AbiItem} from 'web3-utils';
-import BigNumber from 'bignumber.js';
-import Web3 from 'web3';
+import React, { useState, useEffect } from "react";
+import { useWallet } from "use-wallet";
+import { AbiItem } from "web3-utils";
+import BigNumber from "bignumber.js";
+import Web3 from "web3";
 
 interface ViewFunctionProps {
   address: string;
   abi: AbiItem;
   decimal?: any;
 }
-export function ViewFunction(props: ViewFunctionProps) : React.ReactElement {
-  const { ethereum }: {ethereum:any} = useWallet();
+export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
+  const { ethereum }: { ethereum: any } = useWallet();
+  const priceBNBABI:AbiItem = {
+    inputs: [],
+    name: "priceBNB",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  };
   const web3 = new Web3(ethereum);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState<any>("");
+  const [bnbprice, setBnbprice] = useState<any>("");
   const contract = new web3.eth.Contract([props.abi], props.address);
   useEffect(() => {
-    // You need to restrict it at some point
-    // This is just dummy code and should be replaced by actual
     getValue();
-  }, []);
-
+    getBnbPrice();
+  },[]);
+  const getBnbPrice = () => {
+    const contract = new web3.eth.Contract([priceBNBABI], props.address);
+    contract.methods["priceBNB"]()
+      .call()
+      .then((data: any) => {
+        if (priceBNBABI.outputs!.length > 1) {
+          let concat = "";
+          for (let i = 0; i < priceBNBABI.outputs!.length; i++) {
+            concat +=
+            priceBNBABI.outputs![i].name +
+              " : " +
+              data[priceBNBABI.outputs![i].name] +
+              "\n";
+              setBnbprice(concat);
+          }
+        } else {
+          if (props.decimal != undefined) {
+            let bn = new BigNumber(data);
+            setBnbprice(
+              bn.shiftedBy(-18).toString()
+            );
+          } else {
+            setBnbprice(data);
+          }
+        }
+      });
+  };
   const getValue = () => {
-    contract.methods[props.abi.name!]().call().then((data: any) => {
-      if(props.abi.outputs!.length > 1) {
-        let concat = "";
-        for(let i = 0; i<props.abi.outputs!.length; i++){
-          concat += props.abi.outputs![i].name + " : " + data[props.abi.outputs![i].name] + "\n";
-          setValue(concat);
+    contract.methods[props.abi.name!]()
+      .call()
+      .then((data: any) => {
+        if (props.abi.outputs!.length > 1) {
+          let concat = "";
+          for (let i = 0; i < props.abi.outputs!.length; i++) {
+            concat +=
+              props.abi.outputs![i].name +
+              " : " +
+              data[props.abi.outputs![i].name] +
+              "\n";
+            setValue(concat);
+          }
+        } else {
+          if (props.decimal != undefined) {
+            let bn = new BigNumber(data);
+            setValue(bn.shiftedBy(-props.decimal![props.abi.name!]).toString());
+          } else {
+            setValue(data);
+          }
         }
-      }
-      else {
-        if(props.decimal != undefined){
-          let bn = new BigNumber(data);
-          setValue(bn.shiftedBy(-props.decimal![props.abi.name!]).toString());
-        }
-        else {
-          setValue(data);
-        }
-      }
-    });
-  }
-  console.log(props);
-
-  return(
+      });
+  };
+  return (
     <li>
       <div>
-        <b>
-          {props.abi.name}: {" "} 
-        </b>
-        {value}
+        <b>{props.abi.name==="mBNBtoBNB" ? "price mBNB" :props.abi.name}: </b>
+        {props.abi.name==="mBNBtoBNB" ? parseFloat(value) * parseFloat(bnbprice) : value}
       </div>
     </li>
   );

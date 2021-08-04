@@ -11,8 +11,7 @@
         "redemptionFee",
         "depositBNB",
         "redeemBNB",
-        "collateralBNB",
-        "borrowedBUSD"
+        "mBNBtoBNB"
       ],
       "decimals": {
         "priceBNB": {
@@ -20,6 +19,9 @@
         },
         "collateralBNB": {
           "collateralBNB": 18
+        },
+        "mBNBtoBNB": {
+          "mBNBtoBNB": 21 
         },
         "borrowedBUSD": {
           "borrowedBUSD": 18
@@ -49,7 +51,8 @@
         "tradingFee",
         "performanceFee",
         "redemptionFee",
-        "slippage"
+        "slippage",
+        "threshold"
       ],
       "decimals": {
         "setSlippage": {
@@ -59,10 +62,14 @@
           "_leverageTarget": 2,
           "_tradingFee": 2,
           "_performanceFee": 2,
-          "_redemptionFee": 2
+          "_redemptionFee": 2,
+          "_threshold": 2
         },
         "leverageTarget": {
           "leverageTarget": 2
+        },
+        "threshold": {
+          "threshold": 2
         },
         "tradingFee": {
           "tradingFee": 2
@@ -83,10 +90,20 @@
       "abi": "rebalance",
       "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
       "name": "Rebalance",
-      "functions": ["rebalance", "rebalanceAmount"],
+      "functions": ["rebalance",
+        "rebalanceAmount",
+         "collateralBNB",
+         "borrowedBUSD"
+        ],
       "decimals": {
         "rebalanceAmount": {
           "rebalanceAmount": 18
+        },
+        "borrowedBUSD": {
+          "borrowedBUSD": 18
+        },
+          "collateralBNB": {
+          "collateralBNB": 18
         }
       },
       "approves": {}

@@ -17,7 +17,32 @@
           "type": "int256"
         }
       ],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "borrowedBUSD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "stats",
+      "type": "function"
+    },  {
+      "inputs": [],
+      "name": "collateralBNB",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "stats",
       "type": "function"
     }
   ],
@@ -112,7 +137,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -126,19 +151,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "collateralBNB",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -173,12 +185,12 @@
     "name": "mBNBtoBNB",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint",
         "name": "",
-        "type": "uint256"
+        "type": "uint"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -243,7 +255,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "fees",
     "type": "function"
   },
   {
@@ -341,7 +353,7 @@
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "fees",
     "type": "function"
   },
   {
@@ -382,6 +394,11 @@
       {
         "internalType": "uint256",
         "name": "_ownerFeeXVS",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_threshold",
         "type": "uint256"
       }
     ],

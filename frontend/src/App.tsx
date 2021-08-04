@@ -6,6 +6,8 @@ import { Tabs, TabPanel, Tab, TabList } from "react-tabs";
 import abis from "./assets/abi.json";
 import { TabComponent } from "./pages/Tab";
 import Menu from "./pages/Menu";
+// import "./assets/theme.scss";
+import "./assets/theme.css";
 import { Nav, Navbar } from "react-bootstrap";
 type AbiType = { [key: string]: AbiItem[] };
 
@@ -47,7 +49,7 @@ function App(): React.ReactElement {
                             .filter(
                               (f) =>
                                 x.functions.includes(String(f.name)) &&
-                                f.stateMutability != "view"
+                                f.stateMutability != "view" && f.stateMutability != "stats" && f.stateMutability != "fees" 
                             )}
                           viewFunctions={typedAbi[x.abi]
                             .filter((y) => y.type === "function")
@@ -57,13 +59,22 @@ function App(): React.ReactElement {
                                 x.functions.includes(String(f.name)) &&
                                 f.stateMutability == "view"
                             )}
+                            statsFunctions={typedAbi[x.abi]
+                              .filter((y) => y.type === "function")
+                              .filter((y) => y.name !== undefined)
+                              .filter(
+                                (f) =>{
+                                  
+                                  return x.functions.includes(String(f.name)) &&
+                                  f.stateMutability === "stats"}
+                              )}
                             feeFunctions={typedAbi[x.abi]
-                              .filter((y) => y.name?.includes("fee"))
+                              .filter((y) => y.type === "function")
                               .filter((y) => y.name !== undefined)
                               .filter(
                                 (f) =>
                                   x.functions.includes(String(f.name)) &&
-                                  f.stateMutability == "view"
+                                  f.stateMutability == "fees"
                               )}
                         />
                       </TabPanel>
