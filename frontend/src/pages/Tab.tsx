@@ -72,24 +72,6 @@ export function TabComponent(props: TabProps): React.ReactElement {
                   <>
                     <li>
                       <div>
-                        <b>BNB Gas (estimated): </b>
-                        $500
-                      </div>
-                    </li>
-                    <li>
-                      <div>
-                        <b>XVS reward (estimated): </b>
-                        500
-                      </div>
-                    </li>
-                    <li>
-                      <div>
-                        <b>Leverage Target: </b>
-                        200
-                      </div>
-                    </li>
-                    <li>
-                      <div>
                         <b>XVS fee share: </b>
                         50%
                       </div>

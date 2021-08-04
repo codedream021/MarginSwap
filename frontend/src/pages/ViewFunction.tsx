@@ -89,7 +89,7 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
         <b>
           {props.abi.name === "mBNBtoBNB" ? "price mBNB" : (props.abi.showName || props.abi.name )}:{" "}
         </b>
-        <span style={{ fontSize: "18px" }}>
+        <span style={{ fontSize: "20px" }}>
           {props.prefix && props.prefix}
           {props.abi.name === "mBNBtoBNB"
             ? (value * parseFloat(bnbprice)).toFixed(2)

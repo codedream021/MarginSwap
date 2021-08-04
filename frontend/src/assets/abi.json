@@ -18,6 +18,7 @@
           "type": "int256"
         }
       ],
+      "round": true,
       "stateMutability": "view",
       "type": "function"
     },
@@ -159,7 +160,7 @@
     "name": "depositBNB",
     "showName": "Buy mBNB",
     "placeholder": "enter BNB to swap for mBNB",
-    "btnName": "Sell mBNB",
+    "btnName": "Sell BNB",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
