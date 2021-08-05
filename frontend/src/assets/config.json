@@ -2,7 +2,7 @@
   "tabs": [
     {
       "abi": "MarginSwap",
-      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "address": "0x8B67D02244d8BAf1D25eD622C2872D0F23B1D382",
       "name": "Swap",
       "functions": [
         "priceBNB",
@@ -31,14 +31,14 @@
       },
       "approves": {
         "redeemBNB": {
-          "address": "0x3dE03f38a4c84cbdB612ef1aDe9027B3D1c6ea3E",
+          "address": "0x2bc5946a4A4cA111689016bb094DBCb6F5b7a2E9",
           "amount": "mBNBamount"
         }
       }
     },
     {
       "abi": "MarginSwap",
-      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "address": "0x8B67D02244d8BAf1D25eD622C2872D0F23B1D382",
       "name": "Admin",
       "functions": [
         "enableCollateral",
@@ -87,10 +87,11 @@
       "approves": {}
     },
     {
-      "abi": "rebalance",
-      "address": "0x8f293839f748D220dA71e2ef91522996fb1ce3d9",
+      "abi": "MarginSwap",
+      "address": "0x8B67D02244d8BAf1D25eD622C2872D0F23B1D382",
       "name": "Rebalance",
-      "functions": ["rebalance",
+      "functions": [
+        "rebalance",
         "rebalanceAmount",
          "collateralBNB",
          "borrowedBUSD"

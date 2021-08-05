@@ -242,7 +242,7 @@ contract MarginSwap {
         uint256 withdrawAmount = getAssetAmount(amountBUSD, priceBNB());
         collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
         buyBUSD(amountBUSD); // then sell BNB for BUSD 
-        borrowRepay(busd.balanceOf(address(this)); // then repay BUSD 
+        borrowRepay(busd.balanceOf(address(this))); // then repay BUSD 
     }
 
     function rebalance() public {
@@ -253,7 +253,7 @@ contract MarginSwap {
         }
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
-        int256 rebalanceThreshold = borrowedBUSD()*(threshold/DENOMINATOR)
+        int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
         if (abs(amount) > rebalanceThreshold) { // could have it as a threshold
             if (amount > 0) {
                 borrowBNB(uint256(amount)); // borrow DAI to buy BNB
@@ -273,3 +273,4 @@ contract MarginSwap {
         uint targetLoan = getValue(collateralBNB(), priceBNB())*(leverageTarget-DENOMINATOR)/leverageTarget;
         return int(targetLoan) - int(borrowedBUSD()); // positive if need more loan
     }
+}
