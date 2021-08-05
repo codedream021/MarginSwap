@@ -132,7 +132,7 @@ contract MarginSwap {
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
         collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
         payable(msg.sender).transfer(amountBNB); // send amountBNB back to user
-        //rebalance();
+        rebalance();
     }
 
 
