@@ -239,7 +239,7 @@ contract MarginSwap {
     }
 
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
-        uint256 withdrawAmount = getValue(amountBUSD, priceBNB());
+        uint256 withdrawAmount = getAssetAmount(amountBUSD, priceBNB());
         collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
         buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(busd.balanceOf(address(this)); // then repay BUSD 
