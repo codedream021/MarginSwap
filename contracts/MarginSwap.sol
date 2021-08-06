@@ -96,7 +96,7 @@ contract MarginSwap {
         return _amount * _ratio / DENOMINATOR;
     }
     
-    function abs(int x) internal pure returns (uint256) {
+    function abs(uint256 x) internal pure returns (uint256) {
         return x >= 0 ? x : -x;
     }
 
