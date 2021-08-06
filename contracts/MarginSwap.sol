@@ -256,10 +256,10 @@ contract MarginSwap {
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
         int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
         if (abs(amount) > rebalanceThreshold) { // could have it as a threshold
-            if (amount > 0) {
+            if (amount >= 0) {
                 borrowBNB(uint256(amount)); // borrow DAI to buy BNB
             } else {
-                repayBNB(uint256(abs(amount))); // use BNB to repay BUSD loan
+                repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
             }
             
             redeemXVS();
