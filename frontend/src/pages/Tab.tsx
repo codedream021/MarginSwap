@@ -73,7 +73,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                     <li>
                       <div>
                         <b>XVS fee share: </b>
-                        50%
+                        50.0%
                       </div>
                     </li>
                   </>
