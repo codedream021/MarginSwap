@@ -11,6 +11,7 @@
     {
       "inputs": [],
       "name": "rebalanceAmount",
+      "showName": "Rebalance Amount",
       "outputs": [
         {
           "internalType": "int256",
@@ -25,6 +26,8 @@
     {
       "inputs": [],
       "name": "borrowedBUSD",
+      "showName": "Borrowed BUSD",
+      "round": true,
       "outputs": [
         {
           "internalType": "uint256",
@@ -37,6 +40,8 @@
     },  {
       "inputs": [],
       "name": "collateralBNB",
+      "showName": "Collateral BNB",
+      "round":true,
       "outputs": [
         {
           "internalType": "uint256",
@@ -177,6 +182,7 @@
   {
     "inputs": [],
     "name": "leverageTarget",
+    "showName": "leverage Target",
     "outputs": [
       {
         "internalType": "uint256",
@@ -230,6 +236,7 @@
   {
     "inputs": [],
     "name": "ownerFeeXVS",
+    "showName": "owner Fee XVS",
     "outputs": [
       {
         "internalType": "uint256",
@@ -270,6 +277,7 @@
   {
     "inputs": [],
     "name": "priceBNB",
+    "showName": "Price BNB",
     "outputs": [
       {
         "internalType": "uint256",
@@ -321,6 +329,7 @@
   {
     "inputs": [],
     "name": "redemptionFee",
+    "showName": "Redemption Fee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -383,7 +392,7 @@
       }
     ],
     "name": "transferOwnership",
-    "showName": "transferOwnership",
+    "showName": "Transfer Ownership",
     "btnName": "Set",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -423,6 +432,7 @@
       }
     ],
     "name": "updateRatio",
+    "showName": "Update Ratio",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -145,7 +145,7 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
             ""
           )}
           <button className="btn btn-primary" onClick={handleSubmit}>
-            {props.abi.btnName || "exec"}
+            {props.abi.btnName || "Set"}
           </button>
         </fieldset>
       </form>

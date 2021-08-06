@@ -6,7 +6,6 @@ import { Tabs, TabPanel, Tab, TabList } from "react-tabs";
 import abis from "./assets/abi.json";
 import { TabComponent } from "./pages/Tab";
 import Menu from "./pages/Menu";
-// import "./assets/theme.scss";
 import "./assets/theme.css";
 import { Nav, Navbar } from "react-bootstrap";
 type AbiType = { [key: string]: AbiItem[] };

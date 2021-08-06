@@ -9,6 +9,7 @@ interface ViewFunctionProps {
   abi: AbiItem;
   suffx?: string;
   prefix?: string;
+  numberOfRounds?: number;
   decimal?: any;
 }
 export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
@@ -87,13 +88,22 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
     <li>
       <div>
         <b>
-          {props.abi.name === "mBNBtoBNB" ? "price mBNB" : (props.abi.showName || props.abi.name )}:{" "}
+          {props.abi.name === "mBNBtoBNB"
+            ? "price mBNB"
+            : props.abi.showName || props.abi.name}
+          :{" "}
         </b>
         <span style={{ fontSize: "20px" }}>
           {props.prefix && props.prefix}
           {props.abi.name === "mBNBtoBNB"
             ? (value * parseFloat(bnbprice)).toFixed(2)
-            : (props.abi.round ? value.substr(0, value.lastIndexOf(".") + 3) : value) }
+            : props.abi.round
+            ? value.substr(
+                0,
+                value.lastIndexOf(".") +
+                  (props.numberOfRounds ? props.numberOfRounds : 3)
+              )
+            : value}
           {props.suffx && props.suffx}
         </span>
       </div>

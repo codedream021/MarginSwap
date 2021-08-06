@@ -48,7 +48,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                 {props.tabName?.toLowerCase() === "admin"
                   ? "Update ratios"
                   : props.tabName?.toLowerCase() === "rebalance"
-                  ? "Rebalance Statistics"
+                  ? "Rebalance statistics"
                   : "Price"}
               </legend>
               <br />
@@ -63,7 +63,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                         key={props.address + x.name + x.inputs!.length}
                         address={props.address}
                         abi={x}
-                        prefix={props.tabName==="Swap" ? "$" : ""}
+                        prefix={(props.tabName==="Swap" || props.tabName==="Rebalance") ? "$" : ""}
                         decimal={props.decimals[x.name!]}
                       />
                     );
@@ -73,7 +73,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                     <li>
                       <div>
                         <b>XVS fee share: </b>
-                        50.0%
+                        50%
                       </div>
                     </li>
                   </>
@@ -124,6 +124,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
       <ViewFunction
       key={props.address + x.name + x.inputs!.length}
       address={props.address}
+      numberOfRounds={5}
       abi={x}
       decimal={props.decimals[x.name!]}
     />

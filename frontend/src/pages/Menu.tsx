@@ -8,7 +8,7 @@ type Props = {
   collapsed: boolean;
   setCollapsed:any;
 };
-const Menu: React.FC<Props> = ({ tabs,resetCb,setCollapsed,collapsed }) => {
+const Menu: React.FC<Props> = ({resetCb,setCollapsed,collapsed }) => {
   return (
     <Navbar fixed="top" style={{backgroundColor:"#f3ba2f"}} expand="lg">
     <Navbar.Brand href="#home">
@@ -16,10 +16,7 @@ const Menu: React.FC<Props> = ({ tabs,resetCb,setCollapsed,collapsed }) => {
     <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={()=>setCollapsed(!collapsed)} />
     <Navbar.Collapse id="basic-navbar-nav">
       <Nav className=" ms-auto">
-        {/* {tabs.map((tab: any) => {
-          return <Tab key={tab.name}>{tab.name}</Tab>;
-        })} */}
-        <Nav.Link className="ml-auto" onClick={() => resetCb()}>disconnect</Nav.Link>
+        <Nav.Link className="ml-auto" onClick={() => resetCb()}>Disconnect</Nav.Link>
       </Nav>
     </Navbar.Collapse>
 </Navbar>
