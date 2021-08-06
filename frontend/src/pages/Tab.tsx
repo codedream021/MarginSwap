@@ -48,7 +48,7 @@ export function TabComponent(props: TabProps): React.ReactElement {
                 {props.tabName?.toLowerCase() === "admin"
                   ? "Update ratios"
                   : props.tabName?.toLowerCase() === "rebalance"
-                  ? "Rebalance statistics"
+                  ? "Rebalance Statistics"
                   : "Price"}
               </legend>
               <br />
