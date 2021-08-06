@@ -124,6 +124,7 @@ contract MarginSwap {
     }
 
     function redeemBNB(uint mBNBamount) public {
+        // require(mBNBamount < collateralBNB()*0.1, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
         mbnb.transferFrom(msg.sender, address(this), mBNBamount);
         mbnb.burn(mBNBamount);
