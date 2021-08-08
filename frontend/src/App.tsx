@@ -1,6 +1,6 @@
 import React from "react";
 import config from "./assets/config.json";
-import { AbiItem } from "./types/AbiItem";
+import { AbiItem } from "web3-utils";
 import { useWallet, UseWalletProvider } from "use-wallet";
 import { Tabs, TabPanel, Tab, TabList } from "react-tabs";
 import abis from "./assets/abi.json";
@@ -62,7 +62,7 @@ function App(): React.ReactElement {
                             .filter((y) => y.type === "function")
                             .filter((y) => y.name !== undefined)
                             .filter(
-                              (f) =>
+                              (f:any) =>
                                 x.functions.includes(String(f.name)) &&
                                 f.stateMutability != "view" &&
                                 f.stateMutability != "stats" &&
@@ -79,7 +79,7 @@ function App(): React.ReactElement {
                           statsFunctions={typedAbi[x.abi]
                             .filter((y) => y.type === "function")
                             .filter((y) => y.name !== undefined)
-                            .filter((f) => {
+                            .filter((f:any) => {
                               return (
                                 x.functions.includes(String(f.name)) &&
                                 f.stateMutability === "stats"
@@ -89,7 +89,7 @@ function App(): React.ReactElement {
                             .filter((y) => y.type === "function")
                             .filter((y) => y.name !== undefined)
                             .filter(
-                              (f) =>
+                              (f:any) =>
                                 x.functions.includes(String(f.name)) &&
                                 f.stateMutability == "fees"
                             )}

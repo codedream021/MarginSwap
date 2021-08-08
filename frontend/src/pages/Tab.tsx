@@ -1,7 +1,7 @@
 import React from "react";
 import { WriteFunction } from "./WriteFunction";
 import { ViewFunction } from "./ViewFunction";
-import { AbiItem } from "../types/AbiItem";
+import { AbiItem } from "web3-utils";
 interface TabProps {
   address: string;
   decimals: any;
