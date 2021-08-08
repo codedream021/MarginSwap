@@ -1,6 +1,5 @@
 import React from "react";
 import { Nav, Navbar} from "react-bootstrap";
-import { Tab} from "react-tabs";
 import { Tab as TabType} from "../types/config";
 type Props = {
   tabs: TabType[];

@@ -5,7 +5,6 @@ import { AbiItem } from "web3-utils";
 import BigNumber from "bignumber.js";
 import { execute } from "../utils/interaction";
 import erc20 from "../assets/IERC20.json";
-type AbiType = { [key: string]: AbiItem[] };
 type DecimalInfo = { [key: string]: number };
 type ApprovalInfo = {
   address: string;
@@ -107,7 +106,7 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
       <form>
         <fieldset className="rounded-3 shadow">
           {props.abi.name?.toLowerCase() !== "rebalance" && (
-            <legend>{props.abi.showName || props.abi.name }</legend>
+            <legend>{(props.abi as any).showName || props.abi.name }</legend>
           )}
           {props.abi.inputs!.map((x, index) => {
             return (
@@ -118,7 +117,7 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
                   name={"input." + x.name + "#" + index}
                   onChange={handleChange}
                   type="text"
-                  placeholder={props.abi.placeholder || x.type.toString() +
+                  placeholder={(props.abi as any).placeholder || x.type.toString() +
                     (props.decimals != undefined &&
                     props.decimals![x.name] != undefined
                       ? " - decimals : " + props.decimals![x.name]
@@ -138,14 +137,14 @@ export function WriteFunction(props: WriteFunctionProps): React.ReactElement {
                 name={"input.payableAmount#" + props.abi.inputs!.length}
                 onChange={handleChange}
                 type="text"
-                placeholder={props.abi.placeholder}
+                placeholder={(props.abi as any).placeholder}
               />{" "}
             </div>
           ) : (
             ""
           )}
           <button className="btn btn-primary" onClick={handleSubmit}>
-            {props.abi.btnName || "Set"}
+            {(props.abi as any).btnName || "Set"}
           </button>
         </fieldset>
       </form>

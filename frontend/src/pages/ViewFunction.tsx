@@ -90,14 +90,14 @@ export function ViewFunction(props: ViewFunctionProps): React.ReactElement {
         <b>
           {props.abi.name === "mBNBtoBNB"
             ? "price mBNB"
-            : props.abi.showName || props.abi.name}
+            : (props.abi as any).showName || props.abi.name}
           :{" "}
         </b>
         <span style={{ fontSize: "20px" }}>
           {props.prefix && props.prefix}
           {props.abi.name === "mBNBtoBNB"
             ? (value * parseFloat(bnbprice)).toFixed(2)
-            : props.abi.round
+            : (props.abi as any).round
             ? value.substr(
                 0,
                 value.lastIndexOf(".") +

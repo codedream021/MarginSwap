@@ -1,13 +1,7 @@
 import React from "react";
-import { useWallet } from "use-wallet";
 import { WriteFunction } from "./WriteFunction";
 import { ViewFunction } from "./ViewFunction";
 import { AbiItem } from "web3-utils";
-interface AbiWithSignature extends AbiItem {
-  signature?: string;
-}
-type ContractType = { [key: string]: AbiItem[] };
-
 interface TabProps {
   address: string;
   decimals: any;
@@ -20,12 +14,10 @@ interface TabProps {
 }
 
 export function TabComponent(props: TabProps): React.ReactElement {
-  const { account, connect, reset, status } = useWallet();
   return (
     <div className="container">
       <div className="row">
         <div className="col-sm-6 ">
-          <form>
             <fieldset className="rounded-3 shadow-lg">
               {props.writeFunctions.map((x) => {
                 return (
@@ -39,7 +31,6 @@ export function TabComponent(props: TabProps): React.ReactElement {
                 );
               })}
             </fieldset>
-          </form>
         </div>
         <div className="col-sm-6">
           <form>
