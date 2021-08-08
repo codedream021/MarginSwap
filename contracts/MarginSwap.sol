@@ -96,8 +96,8 @@ contract MarginSwap {
         return _amount * _ratio / DENOMINATOR;
     }
     
-    function abs(uint256 x) internal pure returns (uint256) {
-        return x >= 0 ? x : -x;
+    function abs(int256 x) internal pure returns (uint256) {
+        return x >= 0 ? uint256(x) : uint256(-x);
     }
 
     function sendFee(uint256 _fee) internal {
@@ -255,7 +255,7 @@ contract MarginSwap {
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
         int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
-        if (abs(amount) > rebalanceThreshold) { // could have it as a threshold
+        if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
             if (amount >= 0) {
                 borrowBNB(uint256(amount)); // borrow DAI to buy BNB
             } else {
