@@ -1,6 +1,6 @@
 import React from "react";
 import config from "./assets/config.json";
-import { AbiItem } from "web3-utils";
+import { AbiItem } from "./types/AbiItem";
 import { useWallet, UseWalletProvider } from "use-wallet";
 import { Tabs, TabPanel, Tab, TabList } from "react-tabs";
 import abis from "./assets/abi.json";

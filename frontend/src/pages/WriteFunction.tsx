@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useWallet } from "use-wallet";
 import Web3 from "web3";
-import { AbiItem } from "web3-utils";
+import { AbiItem } from "../types/AbiItem";
 import BigNumber from "bignumber.js";
 import { execute } from "../utils/interaction";
 import erc20 from "../assets/IERC20.json";
-type AbiType = { [key: string]: AbiItem[] };
 type DecimalInfo = { [key: string]: number };
 type ApprovalInfo = {
   address: string;

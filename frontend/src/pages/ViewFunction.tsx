@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useWallet } from "use-wallet";
-import { AbiItem } from "web3-utils";
 import BigNumber from "bignumber.js";
 import Web3 from "web3";
+import { AbiItem } from "web3-utils";
 
 interface ViewFunctionProps {
   address: string;

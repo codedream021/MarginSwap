@@ -1,14 +1,11 @@
-import React, { Children } from 'react';
-import { useWallet } from 'use-wallet';
+import React from 'react';
 import { Config } from '../types/config';
 import abis from '../assets/abi.json';
-import { WriteFunction } from './WriteFunction';
-import { ViewFunction } from './ViewFunction';
 import { TabComponent } from './Tab';
 import { AbiItem } from 'web3-utils';
 
 //Tab related imports
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { Tabs, TabPanel } from 'react-tabs';
 import '../style/Tab.less';
 
 interface ContractProps {
@@ -17,10 +14,8 @@ interface ContractProps {
 }
 type AbiType = { [key:string]: AbiItem[] }
 
-const getKeyValue = (key: string) => (obj: Record<string, any>) => obj[key];
 
 export function ContractComponent(props: ContractProps) : React.ReactElement {
-  const { account, connect, reset, status } = useWallet();
   let typedAbi = abis as AbiType;
   return(
     <Tabs>
