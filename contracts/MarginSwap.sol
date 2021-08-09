@@ -255,19 +255,19 @@ contract MarginSwap {
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
         int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
-        if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
-            if (amount >= 0) {
-                borrowBNB(uint256(amount)); // borrow DAI to buy BNB
-            } else {
-                repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
-            }
-            
-            redeemXVS();
-            uint256 xvsBalance = xvs.balanceOf(address(this));
-            // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-            xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
-            xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
+        //if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
+        if (amount >= 0) {
+            borrowBNB(uint256(amount)); // borrow DAI to buy BNB
+        } else {
+            repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
         }
+            
+        redeemXVS();
+        uint256 xvsBalance = xvs.balanceOf(address(this));
+        // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
+        xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
+        xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
+        //}
     }
 
     function rebalanceAmount() public returns(int256) {
