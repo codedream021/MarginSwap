@@ -7,7 +7,7 @@ cd /home/MarginSwap/
 
 git pull
 
-cd /frontend
+cd frontend/
 npm install
 npm run build
 
