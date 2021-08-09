@@ -200,7 +200,7 @@ contract MarginSwap {
         address[] memory path = new address[](2);
         path[0] = wbnb;
         path[1] = address(busd);
-        pancakeRouter.swapETHForExactTokens{value:inputBNB}(amountBUSD, path, address(this), block.timestamp);
+        pancakeRouter.swapETHForExactTokens{value:inputBNB}(amountBUSD*0.9, path, address(this), block.timestamp);
         // send tradingFeeAmount from collateralBNB to owner
         sendFee(fee);
     }
@@ -242,6 +242,7 @@ contract MarginSwap {
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
         uint256 withdrawAmount = getAssetAmount(amountBUSD, priceBNB());
         collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
+        
         buyBUSD(amountBUSD); // then sell BNB for BUSD 
         borrowRepay(busd.balanceOf(address(this))); // then repay BUSD 
     }
@@ -255,19 +256,19 @@ contract MarginSwap {
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
         int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
-        //if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
-        if (amount >= 0) {
-            borrowBNB(uint256(amount)); // borrow DAI to buy BNB
-        } else {
-            repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
-        }
+        if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
+            if (amount >= 0) {
+                borrowBNB(uint256(amount)); // borrow DAI to buy BNB
+            } else {
+                repayBNB(uint256(-amount)); // use BNB to repay BUSD loan
+            }
             
-        redeemXVS();
-        uint256 xvsBalance = xvs.balanceOf(address(this));
-        // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-        xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
-        xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
-        //}
+            redeemXVS();
+            uint256 xvsBalance = xvs.balanceOf(address(this));
+            // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
+            xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
+            xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
+        }
     }
 
     function rebalanceAmount() public returns(int256) {
