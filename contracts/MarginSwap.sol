@@ -193,20 +193,24 @@ contract MarginSwap {
     }
 
     // ----- PancakeSwap Functions 
-    function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
-        // sell BNB for BUSD on PancakeSwap 
-        uint fee = getValue(fraction(amountBUSD,tradingFee), priceBNB());
+
+    function buyBUSD() internal { //sells all BNB in contract for BUSD via PancakeSwap
+        uint256 balanceBNB = address(this).balance; // sell all contract BNB 
+        uint fee = fraction(balanceBNB,tradingFee);
+        uint256 inputBNB = balanceBNB - fee;
+        uint256 price = priceBNB();
+        uint256 minBUSD = getValue(inputBNB,price) * (DENOMINATOR - slippage) / DENOMINATOR;
         address wbnb = pancakeRouter.WETH();
         address[] memory path = new address[](2);
         path[0] = wbnb;
         path[1] = address(busd);
-        pancakeRouter.swapETHForExactTokens{value:address(this).balance}(amountBUSD, path, address(this), block.timestamp);
-        // send tradingFeeAmount from collateralBNB to owner
+        pancakeRouter.swapExactETHForTokens{value:inputBNB}(minBUSD, path, address(this), block.timestamp);
         sendFee(fee);
     }
+    
 
-    function buyBNB(uint amountBUSD) internal returns(uint256 bought) {
-        // sell BUSD for BNB on PancakeSwap 
+    function buyBNB() internal returns(uint256 bought) {
+        uint256 balanceBUSD = busd.balanceOf(address(this));
         uint256 price = priceBNB();
         uint256 minBNB = getAssetAmount(amountBUSD, price) * (DENOMINATOR - slippage) / DENOMINATOR; // 1% slippage
         address wbnb = pancakeRouter.WETH();
@@ -219,9 +223,9 @@ contract MarginSwap {
         bought = address(this).balance - before;
         uint fee = fraction(bought, tradingFee);
         bought = bought - fee;
-        // send tradingFeeAmount from collateralBNB to owner
         sendFee(fee);
     }
+
 
     // ---- Rebalance Mechanism ----- // 
     function performanceFees() internal returns(uint256 fee){
@@ -235,15 +239,14 @@ contract MarginSwap {
 
     function borrowBNB(uint amountBUSD) internal { // purchases BNB with borrowed BUSD
         borrow(amountBUSD); // first borrow BUSD
-        uint256 bought = buyBNB(amountBUSD); // then trade for BNB 
+        uint256 bought = buyBNB(); // then trade for BNB 
         collateralSupply(bought); // then post as collateral 
     }
 
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
         uint256 withdrawAmount = getAssetAmount(amountBUSD, priceBNB());
         collateralWithdrawal(withdrawAmount); // first withdrawal collateral 
-        
-        buyBUSD(amountBUSD); // then sell BNB for BUSD 
+        buyBUSD(); // then sell BNB for BUSD 
         borrowRepay(busd.balanceOf(address(this))); // then repay BUSD 
     }
 
