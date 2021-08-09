@@ -2,7 +2,7 @@
   "tabs": [
     {
       "abi": "MarginSwap",
-      "address": "0xb7fDC251B214a783F7B2fc1715F139fbE082772A",
+      "address": "0x3102b8944b3F99DD519756594dDb96a44114F1d0",
       "name": "Swap",
       "functions": [
         "priceBNB",
@@ -31,7 +31,7 @@
       },
       "approves": {
         "redeemBNB": {
-          "address": "0xB7E1435A4C271796d9e01BF4775175136f4d571E",
+          "address": "0x3b448A2E2032dede1694e2391aC324387e820051",
           "amount": "mBNBamount"
         }
       }
@@ -39,7 +39,7 @@
 
     {
       "abi": "rebalance",
-      "address": "0xb7fDC251B214a783F7B2fc1715F139fbE082772A",
+      "address": "0x3102b8944b3F99DD519756594dDb96a44114F1d0",
       "name": "Rebalance",
       "functions": ["rebalance",
         "rebalanceAmount",
@@ -61,7 +61,7 @@
     },
     {
       "abi": "MarginSwap",
-      "address": "0xb7fDC251B214a783F7B2fc1715F139fbE082772A",
+      "address": "0x3102b8944b3F99DD519756594dDb96a44114F1d0",
       "name": "Admin",
       "functions": [
         "enableCollateral",

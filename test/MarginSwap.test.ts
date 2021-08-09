@@ -51,6 +51,7 @@ describe("MarginSwap", function(){
 
     it("should be able to deposit bnb", async function(){
       await marginSwap.connect(user).depositBNB({value: amount});
+      await marginSwap.connect(owner).setSlippage(9900);
       const vbnbBal = await vBNB.balanceOf(marginSwap.address);
       const rate = await vBNB.exchangeRateStored();
       console.log(vbnbBal.mul(rate).div(amount).toString());
@@ -66,7 +67,7 @@ describe("MarginSwap", function(){
       await marginSwap.enableCollateral();
     });
 
-    it.only("should be able to deposit bnb", async function(){
+    it("should be able to deposit bnb", async function(){
       await marginSwap.connect(user).depositBNB({value: amount});
       await marginSwap.connect(owner).setSlippage(9900);
       await marginSwap.connect(user).rebalance();

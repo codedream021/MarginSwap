@@ -8,7 +8,7 @@ import "./interfaces/IVBep20.sol";
 import "./interfaces/IVenus.sol";
 import "./interfaces/IVenusOracle.sol";
 import "./interfaces/IPancakeRouter.sol";
-
+import "hardhat/console.sol";
 contract MarginSwap {
     // POOLS
     //uint public collateralBNB; // BNB collateral in Venus
@@ -111,6 +111,8 @@ contract MarginSwap {
         } else if (equityBNB == 0) { // starting conditions 
             return 1e18; // 1 BNB for 1 mBNB
         } else {
+            console.log("TOTALSUPPLY");
+            console.logUint(mbnb.totalSupply());
             return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
@@ -127,13 +129,13 @@ contract MarginSwap {
         // require(mBNBamount < collateralBNB()*0.1, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
         mbnb.transferFrom(msg.sender, address(this), mBNBamount);
-        mbnb.burn(mBNBamount);
         uint bnbAmount = getValue(mBNBamount, priceAsBNB);
         uint feeAmount = fraction(bnbAmount, redemptionFee);
         uint amountBNB = bnbAmount - feeAmount;// get amount of BNB to withdrawal 
         collateralWithdrawal(amountBNB); // withdrawal collateral from Venus
         payable(msg.sender).transfer(amountBNB); // send amountBNB back to user
         rebalance();
+        mbnb.burn(mBNBamount);
     }
 
 
@@ -194,13 +196,11 @@ contract MarginSwap {
     function buyBUSD(uint amountBUSD) internal { //have it exact BUSD
         // sell BNB for BUSD on PancakeSwap 
         uint fee = getValue(fraction(amountBUSD,tradingFee), priceBNB());
-        uint256 price = priceBNB();
-        uint256 inputBNB = getAssetAmount(amountBUSD, price) * (DENOMINATOR + slippage) / DENOMINATOR; // 1% slippages
         address wbnb = pancakeRouter.WETH();
         address[] memory path = new address[](2);
         path[0] = wbnb;
         path[1] = address(busd);
-        pancakeRouter.swapETHForExactTokens{value:inputBNB}(amountBUSD*0.9, path, address(this), block.timestamp);
+        pancakeRouter.swapETHForExactTokens{value:address(this).balance}(amountBUSD, path, address(this), block.timestamp);
         // send tradingFeeAmount from collateralBNB to owner
         sendFee(fee);
     }
@@ -255,7 +255,7 @@ contract MarginSwap {
         }
         sendFee(fee); // transfer fee to Owner
         int256 amount = rebalanceAmount(); // compute the rebalance amount 
-        int256 rebalanceThreshold = int256(borrowedBUSD()*(threshold/DENOMINATOR));
+        int256 rebalanceThreshold = int256(borrowedBUSD()*threshold/DENOMINATOR);
         if (abs(amount) > uint256(rebalanceThreshold)) { // could have it as a threshold
             if (amount >= 0) {
                 borrowBNB(uint256(amount)); // borrow DAI to buy BNB
@@ -266,8 +266,8 @@ contract MarginSwap {
             redeemXVS();
             uint256 xvsBalance = xvs.balanceOf(address(this));
             // send 50% of redeemed XVS to owner and other 50% to rebalancer (msg.sender)
-            xvs.transfer(msg.sender, xvsBalance*(1 - ownerFeeXVS/DENOMINATOR));
-            xvs.transfer(owner, xvsBalance*(ownerFeeXVS/DENOMINATOR));
+            xvs.transfer(msg.sender, xvsBalance - xvsBalance* ownerFeeXVS/DENOMINATOR);
+            xvs.transfer(owner, xvsBalance*ownerFeeXVS/DENOMINATOR);
         }
     }
 
