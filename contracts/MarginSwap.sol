@@ -239,8 +239,8 @@ contract MarginSwap {
 
     function borrowBNB(uint amountBUSD) internal { // purchases BNB with borrowed BUSD
         borrow(amountBUSD); // first borrow BUSD
-        uint256 bought = buyBNB(); // then trade for BNB 
-        collateralSupply(bought); // then post as collateral 
+        buyBNB(); // then trade for BNB 
+        collateralSupply(address(this).balance); // then post as collateral 
     }
 
     function repayBNB(uint amountBUSD) internal { // repays BUSD with collateral BNB 
