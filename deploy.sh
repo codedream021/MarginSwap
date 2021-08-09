@@ -7,4 +7,8 @@ cd /home/MarginSwap/
 
 git pull
 
+cd /frontend
+npm install
+npm run build
+
 rm /home/maintenance_page.html
