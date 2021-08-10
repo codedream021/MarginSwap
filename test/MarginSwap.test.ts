@@ -79,4 +79,23 @@ describe("MarginSwap", function(){
       await marginSwap.connect(user).redeemBNB(amount);
     });
   });
+  describe.only("deposit 0.1  -> rebalance -> rebalance  -> failed withdraw 0.05 mbnb -> withdraw 0.01 mbnb", function(){
+    const amount = BigNumber.from("100000000000000000");
+    beforeEach(async function(){
+      await marginSwap.enableCollateral();
+    });
+
+    it("should be able to deposit bnb", async function(){
+      await marginSwap.connect(user).depositBNB({value: amount});
+      await marginSwap.connect(owner).setSlippage(9900);
+      await marginSwap.connect(user).rebalance();
+      await marginSwap.connect(user).rebalance();
+      console.log("rebalance done");
+      const vbnbBal = await vBNB.balanceOf(marginSwap.address);
+      const rate = await vBNB.exchangeRateStored();
+      await mBNB.connect(user).approve(marginSwap.address, amount);
+      await expect(marginSwap.connect(user).redeemBNB(amount.div(2))).to.be.reverted;
+      await marginSwap.connect(user).redeemBNB(amount.div(10));
+    });
+  });
 });

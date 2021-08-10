@@ -8,7 +8,6 @@ import "./interfaces/IVBep20.sol";
 import "./interfaces/IVenus.sol";
 import "./interfaces/IVenusOracle.sol";
 import "./interfaces/IPancakeRouter.sol";
-import "hardhat/console.sol";
 contract MarginSwap {
     // POOLS
     //uint public collateralBNB; // BNB collateral in Venus
@@ -111,8 +110,6 @@ contract MarginSwap {
         } else if (equityBNB == 0) { // starting conditions 
             return 1e18; // 1 BNB for 1 mBNB
         } else { // equityBNB / mBNB supply, if BNB
-            console.log("TOTALSUPPLY");
-            console.logUint(mbnb.totalSupply());
             return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
         }
     }
@@ -126,7 +123,7 @@ contract MarginSwap {
     }
 
     function redeemBNB(uint mBNBamount) public {
-        uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 0.20 // we can adjust the 10% limit later
+        uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 20 / 100; // we can adjust the 10% limit later
         require(mBNBamount < withdrawalLimitmBNB, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
         mbnb.transferFrom(msg.sender, address(this), mBNBamount);
@@ -181,10 +178,12 @@ contract MarginSwap {
 
     function redeemXVS() internal {
         // redeem all XVS that has been earned
+        if(venus.venusAccrued(address(this)) > 0) {
         address[] memory market = new address[](2);
         market[0] = address(vBNB);
         market[1] = address(vBusd);
         venus.claimVenus(address(this), market);
+        }
     }
 
     function priceBNB() public view returns(uint256) { //have it exact BUSD
