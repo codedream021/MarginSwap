@@ -110,7 +110,7 @@ contract MarginSwap {
             return 0; // mBNB worthless
         } else if (equityBNB == 0) { // starting conditions 
             return 1e18; // 1 BNB for 1 mBNB
-        } else {
+        } else { // equityBNB / mBNB supply, if BNB
             console.log("TOTALSUPPLY");
             console.logUint(mbnb.totalSupply());
             return uint256(equityBNB) * 1e18 / mbnb.totalSupply();
@@ -126,7 +126,8 @@ contract MarginSwap {
     }
 
     function redeemBNB(uint mBNBamount) public {
-        // require(mBNBamount < collateralBNB()*0.1, "Try smaller amount. Must be smaller than 10% of collateral");
+        uint256 mBNBCollateralValue = collateralBNB() / mBNBtoBNB()
+        require(mBNBamount < mBNBCollateralValue*0.1, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
         mbnb.transferFrom(msg.sender, address(this), mBNBamount);
         uint bnbAmount = getValue(mBNBamount, priceAsBNB);
