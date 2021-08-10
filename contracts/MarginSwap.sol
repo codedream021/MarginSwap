@@ -210,7 +210,7 @@ contract MarginSwap {
     
 
     function buyBNB() internal returns(uint256 bought) {
-        uint256 balanceBUSD = busd.balanceOf(address(this));
+        uint256 amountBUSD = busd.balanceOf(address(this));
         uint256 price = priceBNB();
         uint256 minBNB = getAssetAmount(amountBUSD, price) * (DENOMINATOR - slippage) / DENOMINATOR; // 1% slippage
         address wbnb = pancakeRouter.WETH();
