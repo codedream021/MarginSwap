@@ -1,5 +1,5 @@
 async function main() {
-  const Factory = await ethers.getContractFactory("MarginSwapTestnet");
+  const Factory = await ethers.getContractFactory("MarginSwapMainnet");
   const contract = await Factory.deploy();
   console.log("Contract address: " + contract.address)
 }
