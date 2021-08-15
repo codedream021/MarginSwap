@@ -51,6 +51,9 @@ export default {
     },
     mainnet: {
       url: 'https://bsc-dataseed1.binance.org:443',
+      accounts: [
+        privateKey
+      ]
     },
     testnet: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
