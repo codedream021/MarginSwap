@@ -120,10 +120,11 @@ contract MarginSwap {
         uint mBNBamount = getValue(msg.value, priceAsBNB); // calculate amount of mBNB to mind and send
         collateralSupply(msg.value); // send deposited BNB to Venus collateral 
         mbnb.mint(msg.sender, mBNBamount);// mint mBNBamount
+        rebalance();
     }
 
     function redeemBNB(uint mBNBamount) public {
-        //uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 20 / 100; // we can adjust the 10% limit later
+        uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 20 / 100; // we can adjust the 10% limit later
         uint256 withdrawalLimitmBNB = fraction(mbnb.totalSupply(),0.20); // can adjust 0.20 later
         require(mBNBamount < withdrawalLimitmBNB, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
