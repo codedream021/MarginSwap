@@ -124,7 +124,7 @@ contract MarginSwap {
     }
 
     function redeemBNB(uint mBNBamount) public {
-        uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 20 / 100; // we can adjust the 10% limit later
+        //uint256 withdrawalLimitmBNB = mbnb.totalSupply() * 20 / 100; // we can adjust the 10% limit later
         uint256 withdrawalLimitmBNB = fraction(mbnb.totalSupply(),0.20); // can adjust 0.20 later
         require(mBNBamount < withdrawalLimitmBNB, "Try smaller amount. Must be smaller than 10% of collateral");
         uint priceAsBNB = mBNBtoBNB(); // get price of mBNB (in BNB/mBNB)
