@@ -120,7 +120,6 @@ contract MarginSwap {
         uint mBNBamount = getValue(msg.value, priceAsBNB); // calculate amount of mBNB to mind and send
         collateralSupply(msg.value); // send deposited BNB to Venus collateral 
         mbnb.mint(msg.sender, mBNBamount);// mint mBNBamount
-        rebalance();
     }
 
     function redeemBNB(uint mBNBamount) public {
